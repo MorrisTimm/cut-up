@@ -53,7 +53,7 @@ static char bottom_text[3] = "59";
 static Layer* cut_layer;
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
-  strftime(top_text, 3, clock_is_24h_style() ? "%H" : "%h", tick_time);
+  strftime(top_text, 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
   strftime(bottom_text, 3, "%M", tick_time);
   layer_mark_dirty(top_layer);
   layer_mark_dirty(bottom_layer);
