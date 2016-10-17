@@ -71,10 +71,8 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
   fctx_set_fill_color(&fctx, color_settings.text_top);
   fctx_set_pivot(&fctx, FPointZero);
 #ifdef PBL_ROUND  
-  //fctx_set_offset(&fctx, FPointI(bounds.size.w/2-8,bounds.size.h/3+12));
   fctx_set_offset(&fctx, FPointI(12, bounds.size.h/2+38));
 #else
-  //fctx_set_offset(&fctx, FPointI(bounds.size.w/2-10,bounds.size.h/3+10));
   fctx_set_offset(&fctx, FPointI(0, bounds.size.h/2+38));
 #endif
   fctx_set_rotation(&fctx, 0);
@@ -128,14 +126,15 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
   fctx_set_fill_color(&fctx, color_settings.text_bottom);
   fctx_set_pivot(&fctx, FPointZero);
 #ifdef PBL_ROUND  
-  //fctx_set_offset(&fctx, FPointI(bounds.size.w/2+16,(bounds.size.h/3*2)-6));
-  fctx_set_offset(&fctx, FPointI(bounds.size.w-12,bounds.size.h/2-12));
+  //fctx_set_offset(&fctx, FPointI(bounds.size.w-12,bounds.size.h/2-12));
+  fctx_set_offset(&fctx, FPointI(bounds.size.w-147,bounds.size.h/2-12));
 #else
-  //fctx_set_offset(&fctx, FPointI(bounds.size.w/2+10,(bounds.size.h/3*2)-2));
-  fctx_set_offset(&fctx, FPointI(bounds.size.w,bounds.size.h/2-12));
+  //fctx_set_offset(&fctx, FPointI(bounds.size.w,bounds.size.h/2-12));
+  fctx_set_offset(&fctx, FPointI(10,bounds.size.h/2-12));
 #endif
   fctx_set_rotation(&fctx, 0);
-  fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentRight, FTextAnchorCapTop);
+  //fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentRight, FTextAnchorCapTop);
+  fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentLeft, FTextAnchorCapTop);
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
 }
@@ -149,8 +148,10 @@ static void bottom_cutting_layer_update_proc(Layer* layer, GContext* ctx) {
 
 static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
   GBitmap* buffer = graphics_capture_frame_buffer(ctx);
+#ifdef PBL_BW
   GSize buffer_size = gbitmap_get_bounds(buffer).size;
-
+#endif
+  
   // copy from the center window in the framebuffer into the backbuffer bitmap
   for(int i = copy_window_start; i < copy_window_start+copy_window_height; ++i) {
 #ifdef PBL_COLOR
@@ -220,9 +221,9 @@ static void my_window_load(Window *window) {
   cut[0] = GPoint(0, root_bounds.size.h/2+10);
   cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-10);
 
-  // this can be fine tuned to save more RAM, it only needs to cover the area that overlaps
-  copy_window_start = root_bounds.size.h/3;
-  copy_window_height = root_bounds.size.h/3;
+  // this is fine tuned to save RAM, it only needs to cover the overlapping area
+  copy_window_start = cut[1].y-10;
+  copy_window_height = cut[0].y-cut[1].y+10;
 
   top_layer = layer_create(root_bounds);
   layer_set_update_proc(top_layer, top_layer_update_proc);
