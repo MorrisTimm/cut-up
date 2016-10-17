@@ -12,6 +12,11 @@ extern void start();
 
 //#define ALTERNATE_ALIGNMENT
 
+enum {
+  FONT,
+  OUTLINE_FONT
+};
+
 Settings settings;
 static Window* my_window;
 static FFont* font_peace_sans[2];
@@ -65,34 +70,36 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
   graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, copy_window_start+copy_window_height), 0, 0);
 
   // draw the text
-  if(settings.font_top && !gcolor_equal(settings.color_text_fill_top, settings.color_background_top)) {
+  if(!gcolor_equal(settings.color_text_top, settings.color_background_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text(ctx, top_text, 0, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text(ctx, top_text, FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text(ctx, top_text, 0, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text(ctx, top_text, FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text(ctx, top_text, 0, 12, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text(ctx, top_text, FONT, 12, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text(ctx, top_text, 0, 0, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text(ctx, top_text, FONT, 0, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
+  if(!gcolor_equal(settings.color_text_outline_top, settings.color_text_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-  draw_text(ctx, top_text, settings.font_top, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text(ctx, top_text, OUTLINE_FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-  draw_text(ctx, top_text, settings.font_top, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text(ctx, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND  
-  draw_text(ctx, top_text, settings.font_top, 12, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text(ctx, top_text, OUTLINE_FONT, 12, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-  draw_text(ctx, top_text, settings.font_top, 0, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text(ctx, top_text, OUTLINE_FONT, 0, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
+  }
 }
 
 static void top_cutting_layer_update_proc(Layer* layer, GContext* ctx) {
@@ -134,34 +141,36 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
   graphics_fill_rect(ctx, GRect(0, copy_window_start, bounds.size.w, bounds.size.h-copy_window_start), 0, 0);
 
   // draw the text
-  if(settings.font_bottom && !gcolor_equal(settings.color_text_fill_bottom, settings.color_background_bottom)) {
+  if(!gcolor_equal(settings.color_text_bottom, settings.color_background_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text(ctx, bottom_text, 0, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text(ctx, bottom_text, 0, 10, bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, FONT, 10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text(ctx, bottom_text, 0, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text(ctx, bottom_text, 0, bounds.size.w,bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
+  if(!gcolor_equal(settings.color_text_outline_bottom, settings.color_text_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-  draw_text(ctx, bottom_text, settings.font_bottom, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-  draw_text(ctx, bottom_text, settings.font_bottom,  10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-  draw_text(ctx, bottom_text, settings.font_bottom, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-  draw_text(ctx, bottom_text, settings.font_bottom, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text(ctx, bottom_text, OUTLINE_FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
+  }
 }
 
 static void bottom_cutting_layer_update_proc(Layer* layer, GContext* ctx) {
@@ -230,22 +239,11 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
 }
 
 static void my_window_load(Window *window) {
-  // settings
-  settings.color_background_top = GColorBlack;
-  settings.color_background_bottom = GColorBlack;
-  settings.color_text_top = GColorWhite;
-  settings.color_text_bottom = GColorPictonBlue;
-  settings.color_text_fill_top = GColorBlack;
-  settings.color_text_fill_bottom = GColorBlack;
-  settings.color_the_cut = GColorWhite;
-  settings.font_top = 1;
-  settings.font_bottom = 0;
-  
   Layer* root_layer = window_get_root_layer(window);
   GRect root_bounds = layer_get_bounds(root_layer);
 
-  font_peace_sans[0] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS);
-  font_peace_sans[1] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS_OUTLINE);
+  font_peace_sans[FONT] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS);
+  font_peace_sans[OUTLINE_FONT] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS_OUTLINE);
   
   // the endpoints of the cutting line
   cut[0] = GPoint(0, root_bounds.size.h/2+10);

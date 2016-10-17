@@ -17,11 +17,9 @@
             "color_background_bottom",
             "color_text_top",
             "color_text_bottom",
-            "color_text_fill_top",
-            "color_text_fill_bottom",
-            "color_the_cut",
-            "font_top",
-            "font_bottom"
+            "color_text_outline_top",
+            "color_text_outline_bottom",
+            "color_the_cut"
         ],
         "projectType": "native",
         "resources": {

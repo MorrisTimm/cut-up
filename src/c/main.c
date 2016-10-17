@@ -1,4 +1,3 @@
-
 #include <pebble.h>
 #include "cutting_edge.h"
 //#include "enamel.h"
@@ -23,6 +22,16 @@ void start() {
 void handle_init(void) {
   //enamel_init();
   //events_app_message_open();
+
+  // settings
+  settings.color_background_top = GColorBlack;
+  settings.color_background_bottom = settings.color_background_top;
+  settings.color_text_top = GColorWhite;
+  settings.color_text_bottom = GColorPictonBlue;
+  settings.color_text_outline_top = GColorWhite;
+  settings.color_text_outline_bottom = GColorPictonBlue;
+  settings.color_the_cut = GColorBlack;
+  
   cutting_edge_init();
 }
 
