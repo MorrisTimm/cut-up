@@ -1,0 +1,69 @@
+[
+{
+  "type": "heading",
+  "id": "main-heading",
+  "defaultValue": "Cut Up Configuration",
+  "size": 1
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "Settings"
+    },
+    {
+      "type": "color",
+      "messageKey": "color_background_top",
+      "defaultValue": "000000",
+      "label": "Background top",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_top",
+      "defaultValue": "FFFFFF",
+      "label": "Top text",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_bottom",
+      "defaultValue": "FFFFFF",
+      "label": "Bottom text",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_outline_top",
+      "defaultValue": "000000",
+      "label": "Top text fill",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_outline_bottom",
+      "defaultValue": "000000",
+      "label": "Bottom text fill",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_the_cut",
+      "defaultValue": "000000",
+      "label": "Line",
+      "sunlight": false,
+      "allowGray": true
+    }
+  ]
+},
+{
+  "type": "submit",
+  "defaultValue": "Save"
+}
+]
