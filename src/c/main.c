@@ -7,6 +7,8 @@
 #define bw_bitmap_data_set_pixel(BMP, BPR, X, Y) (*((BMP)+(Y)*(BPR)+(X)/8)) |= (1 << (X)%8)
 #endif
 
+//#define ALTERNATE_ALIGNMENT
+
 typedef struct {
   GColor background_top;
   GColor background_bottom;
@@ -70,13 +72,25 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
   fctx_set_text_em_height(&fctx, the_font, 105);
   fctx_set_fill_color(&fctx, color_settings.text_top);
   fctx_set_pivot(&fctx, FPointZero);
+#ifdef ALTERNATE_ALIGNMENT
+#ifdef PBL_ROUND  
+  fctx_set_offset(&fctx, FPointI(bounds.size.w-32, bounds.size.h/2+38));
+#else
+  fctx_set_offset(&fctx, FPointI(bounds.size.w-8, bounds.size.h/2+38));
+#endif
+#else
 #ifdef PBL_ROUND  
   fctx_set_offset(&fctx, FPointI(12, bounds.size.h/2+38));
 #else
   fctx_set_offset(&fctx, FPointI(0, bounds.size.h/2+38));
 #endif
+#endif
   fctx_set_rotation(&fctx, 0);
+#ifdef ALTERNATE_ALIGNMENT
+  fctx_draw_string(&fctx, top_text, the_font, GTextAlignmentRight, FTextAnchorBottom);
+#else
   fctx_draw_string(&fctx, top_text, the_font, GTextAlignmentLeft, FTextAnchorBottom);
+#endif
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
 }
@@ -125,16 +139,25 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
   fctx_set_text_em_height(&fctx, the_font, 105);
   fctx_set_fill_color(&fctx, color_settings.text_bottom);
   fctx_set_pivot(&fctx, FPointZero);
+#ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-  //fctx_set_offset(&fctx, FPointI(bounds.size.w-12,bounds.size.h/2-12));
   fctx_set_offset(&fctx, FPointI(bounds.size.w-147,bounds.size.h/2-12));
 #else
-  //fctx_set_offset(&fctx, FPointI(bounds.size.w,bounds.size.h/2-12));
   fctx_set_offset(&fctx, FPointI(10,bounds.size.h/2-12));
 #endif
+#else
+#ifdef PBL_ROUND  
+  fctx_set_offset(&fctx, FPointI(bounds.size.w-12,bounds.size.h/2-12));
+#else
+  fctx_set_offset(&fctx, FPointI(bounds.size.w,bounds.size.h/2-12));
+#endif
+#endif
   fctx_set_rotation(&fctx, 0);
-  //fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentRight, FTextAnchorCapTop);
+#ifdef ALTERNATE_ALIGNMENT
   fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentLeft, FTextAnchorCapTop);
+#else
+  fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentRight, FTextAnchorCapTop);
+#endif
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
 }
