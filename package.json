@@ -1,0 +1,36 @@
+{
+    "author": "Morris",
+    "dependencies": {
+        "pebble-fctx": "^1.6.0"
+    },
+    "keywords": [],
+    "name": "cutting-edge",
+    "pebble": {
+        "displayName": "Cutting Edge",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "data/PeaceSans.ffont",
+                    "name": "THE_FONT",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite"
+        ],
+        "uuid": "10bf9efe-d8ea-43a2-aab3-34ed2ecd8287",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
