@@ -6,6 +6,9 @@
     "keywords": [],
     "name": "cutting-edge",
     "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
         "displayName": "Cutting Edge",
         "enableMultiJS": true,
         "messageKeys": [],
