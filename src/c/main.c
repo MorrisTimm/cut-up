@@ -1,10 +1,11 @@
-#include <pebble.h>
 
-extern void cutting_edge_update();
-extern void cutting_edge_init();
-extern void cutting_edge_deinit();
+#include <pebble.h>
+#include "cutting_edge.h"
+//#include "enamel.h"
+
 extern char top_text[3];
 extern char bottom_text[3];
+extern Settings settings;
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
   strftime(top_text, 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
@@ -20,6 +21,8 @@ void start() {
 }
 
 void handle_init(void) {
+  //enamel_init();
+  //events_app_message_open();
   cutting_edge_init();
 }
 

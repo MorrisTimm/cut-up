@@ -12,13 +12,29 @@
         ],
         "displayName": "Cutting Edge",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": [
+            "color_background_top",
+            "color_background_bottom",
+            "color_text_top",
+            "color_text_bottom",
+            "color_text_fill_top",
+            "color_text_fill_bottom",
+            "color_the_cut",
+            "font_top",
+            "font_bottom"
+        ],
         "projectType": "native",
         "resources": {
             "media": [
                 {
+                    "file": "data/PeaceSans_outline.ffont",
+                    "name": "FONT_PEACE_SANS_OUTLINE",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
                     "file": "data/PeaceSans.ffont",
-                    "name": "THE_FONT",
+                    "name": "FONT_PEACE_SANS",
                     "targetPlatforms": null,
                     "type": "raw"
                 }

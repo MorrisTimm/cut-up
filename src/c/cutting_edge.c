@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fctx.h>
+#include "cutting_edge.h"
 
 extern void start();
 
@@ -11,19 +12,9 @@ extern void start();
 
 //#define ALTERNATE_ALIGNMENT
 
-typedef struct {
-  GColor background_top;
-  GColor background_bottom;
-  GColor text_top;
-  GColor text_bottom;
-  GColor the_cut;
-} ColorSettings;
-
-static ColorSettings color_settings;
-
+Settings settings;
 static Window* my_window;
-
-static FFont* the_font;
+static FFont* font_peace_sans[2];
 static FContext fctx;
 GPoint cut[2];
 static uint16_t copy_window_start;
@@ -32,8 +23,6 @@ static GBitmap* copy_bitmap = NULL;
 static BitmapLayer* bitmap_layer;
 
 static Layer* top_layer;
-static Layer* bottom_layer;
-
 static Layer* top_cutting_layer;
 static GPath* top_cutting_path = NULL;
 static GPathInfo top_cutting_path_info = {
@@ -43,6 +32,7 @@ static GPathInfo top_cutting_path_info = {
 static Layer* top_copy_layer;
 char top_text[3] = "23";
 
+static Layer* bottom_layer;
 static Layer* bottom_cutting_layer;
 static GPath* bottom_cutting_path = NULL;
 static GPathInfo bottom_cutting_path_info = {
@@ -54,45 +44,60 @@ char bottom_text[3] = "59";
 
 static Layer* cut_layer;
 
-static void top_layer_update_proc(Layer* layer, GContext* ctx) {
-  GRect bounds = layer_get_bounds(layer);
-
-  // draw the background
-  graphics_context_set_fill_color(ctx, color_settings.background_top);
-  graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, copy_window_start+copy_window_height), 0, 0);
-
-  // draw the text
+static void draw_text(GContext* ctx, char* text, uint8_t font, int16_t x, int16_t y, GColor color, GTextAlignment text_alignment, FTextAnchor text_anchor) {
   fctx_init_context(&fctx, ctx);
   fctx_begin_fill(&fctx);
-  fctx_set_text_em_height(&fctx, the_font, 105);
-  fctx_set_fill_color(&fctx, color_settings.text_top);
+  fctx_set_text_em_height(&fctx, font_peace_sans[font], 105);
+  fctx_set_fill_color(&fctx, color);
   fctx_set_pivot(&fctx, FPointZero);
-#ifdef ALTERNATE_ALIGNMENT
-#ifdef PBL_ROUND  
-  fctx_set_offset(&fctx, FPointI(bounds.size.w-32, bounds.size.h/2+38));
-#else
-  fctx_set_offset(&fctx, FPointI(bounds.size.w-8, bounds.size.h/2+38));
-#endif
-#else
-#ifdef PBL_ROUND  
-  fctx_set_offset(&fctx, FPointI(12, bounds.size.h/2+38));
-#else
-  fctx_set_offset(&fctx, FPointI(0, bounds.size.h/2+38));
-#endif
-#endif
+  fctx_set_offset(&fctx, FPointI(x, y));
   fctx_set_rotation(&fctx, 0);
-#ifdef ALTERNATE_ALIGNMENT
-  fctx_draw_string(&fctx, top_text, the_font, GTextAlignmentRight, FTextAnchorBottom);
-#else
-  fctx_draw_string(&fctx, top_text, the_font, GTextAlignmentLeft, FTextAnchorBottom);
-#endif
+  fctx_draw_string(&fctx, text, font_peace_sans[font], text_alignment, text_anchor);
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
 }
 
+static void top_layer_update_proc(Layer* layer, GContext* ctx) {
+  GRect bounds = layer_get_bounds(layer);
+
+  // draw the background
+  graphics_context_set_fill_color(ctx, settings.color_background_top);
+  graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, copy_window_start+copy_window_height), 0, 0);
+
+  // draw the text
+  if(settings.font_top && !gcolor_equal(settings.color_text_fill_top, settings.color_background_top)) {
+#ifdef ALTERNATE_ALIGNMENT
+#ifdef PBL_ROUND  
+    draw_text(ctx, top_text, 0, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentRight, FTextAnchorBottom);
+#else
+    draw_text(ctx, top_text, 0, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentRight, FTextAnchorBottom);
+#endif
+#else
+#ifdef PBL_ROUND  
+    draw_text(ctx, top_text, 0, 12, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentLeft, FTextAnchorBottom);
+#else
+    draw_text(ctx, top_text, 0, 0, bounds.size.h/2+38, settings.color_text_fill_top, GTextAlignmentLeft, FTextAnchorBottom);
+#endif
+#endif
+  }
+#ifdef ALTERNATE_ALIGNMENT
+#ifdef PBL_ROUND  
+  draw_text(ctx, top_text, settings.font_top, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+#else
+  draw_text(ctx, top_text, settings.font_top, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+#endif
+#else
+#ifdef PBL_ROUND  
+  draw_text(ctx, top_text, settings.font_top, 12, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+#else
+  draw_text(ctx, top_text, settings.font_top, 0, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+#endif
+#endif
+}
+
 static void top_cutting_layer_update_proc(Layer* layer, GContext* ctx) {
   // cut off the bottom by painting over it in the background color
-  graphics_context_set_fill_color(ctx, color_settings.background_bottom);
+  graphics_context_set_fill_color(ctx, settings.color_background_bottom);
   graphics_context_set_antialiased(ctx, false);
   gpath_draw_filled(ctx, top_cutting_path);
 }
@@ -125,41 +130,43 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
   GRect bounds = layer_get_bounds(layer);
 
   // draw the background
-  graphics_context_set_fill_color(ctx, color_settings.background_bottom);
+  graphics_context_set_fill_color(ctx, settings.color_background_bottom);
   graphics_fill_rect(ctx, GRect(0, copy_window_start, bounds.size.w, bounds.size.h-copy_window_start), 0, 0);
 
   // draw the text
-  fctx_init_context(&fctx, ctx);
-  fctx_begin_fill(&fctx);
-  fctx_set_text_em_height(&fctx, the_font, 105);
-  fctx_set_fill_color(&fctx, color_settings.text_bottom);
-  fctx_set_pivot(&fctx, FPointZero);
+  if(settings.font_bottom && !gcolor_equal(settings.color_text_fill_bottom, settings.color_background_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-  fctx_set_offset(&fctx, FPointI(bounds.size.w-147,bounds.size.h/2-12));
+    draw_text(ctx, bottom_text, 0, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-  fctx_set_offset(&fctx, FPointI(10,bounds.size.h/2-12));
+    draw_text(ctx, bottom_text, 0, 10, bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-  fctx_set_offset(&fctx, FPointI(bounds.size.w-12,bounds.size.h/2-12));
+    draw_text(ctx, bottom_text, 0, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-  fctx_set_offset(&fctx, FPointI(bounds.size.w,bounds.size.h/2-12));
+    draw_text(ctx, bottom_text, 0, bounds.size.w,bounds.size.h/2-12, settings.color_text_fill_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
-  fctx_set_rotation(&fctx, 0);
+  }
 #ifdef ALTERNATE_ALIGNMENT
-  fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentLeft, FTextAnchorCapTop);
+#ifdef PBL_ROUND  
+  draw_text(ctx, bottom_text, settings.font_bottom, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-  fctx_draw_string(&fctx, bottom_text, the_font, GTextAlignmentRight, FTextAnchorCapTop);
+  draw_text(ctx, bottom_text, settings.font_bottom,  10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
-  fctx_end_fill(&fctx);
-  fctx_deinit_context(&fctx);
+#else
+#ifdef PBL_ROUND  
+  draw_text(ctx, bottom_text, settings.font_bottom, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+#else
+  draw_text(ctx, bottom_text, settings.font_bottom, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+#endif
+#endif
 }
 
 static void bottom_cutting_layer_update_proc(Layer* layer, GContext* ctx) {
   // cut off the top by painting over it in the background color
-  graphics_context_set_fill_color(ctx, color_settings.background_top);
+  graphics_context_set_fill_color(ctx, settings.color_background_top);
   graphics_context_set_antialiased(ctx, false);
   gpath_draw_filled(ctx, bottom_cutting_path);
 }
@@ -177,8 +184,8 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
     GBitmapDataRowInfo to_row_info = gbitmap_get_data_row_info(copy_bitmap, i-copy_window_start);
     for(int j = from_row_info.min_x; j < from_row_info.max_x; ++j) {
       // only copy foreground pixels to leave the pixels from the top layer
-      if(   color_settings.background_top.argb != from_row_info.data[j]
-         && color_settings.background_bottom.argb == to_row_info.data[j]) {
+      if(   settings.color_background_top.argb != from_row_info.data[j]
+         && settings.color_background_bottom.argb == to_row_info.data[j]) {
         to_row_info.data[j] = from_row_info.data[j];
       }
     }
@@ -204,7 +211,7 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
   // draw the cuting line
   fctx_init_context(&fctx, ctx);
   fctx_begin_fill(&fctx);
-  fctx_set_fill_color(&fctx, color_settings.the_cut);
+  fctx_set_fill_color(&fctx, settings.color_the_cut);
   fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-2));
   fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2));
   fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2));
@@ -223,17 +230,22 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
 }
 
 static void my_window_load(Window *window) {
-  // color config
-  color_settings.background_top = GColorBlack;
-  color_settings.background_bottom = GColorBlack;
-  color_settings.text_top = GColorWhite;
-  color_settings.text_bottom = GColorPictonBlue;
-  color_settings.the_cut = GColorBlack;
+  // settings
+  settings.color_background_top = GColorBlack;
+  settings.color_background_bottom = GColorBlack;
+  settings.color_text_top = GColorWhite;
+  settings.color_text_bottom = GColorPictonBlue;
+  settings.color_text_fill_top = GColorBlack;
+  settings.color_text_fill_bottom = GColorBlack;
+  settings.color_the_cut = GColorWhite;
+  settings.font_top = 1;
+  settings.font_bottom = 0;
   
   Layer* root_layer = window_get_root_layer(window);
   GRect root_bounds = layer_get_bounds(root_layer);
 
-  the_font = ffont_create_from_resource(RESOURCE_ID_THE_FONT);
+  font_peace_sans[0] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS);
+  font_peace_sans[1] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS_OUTLINE);
   
   // the endpoints of the cutting line
   cut[0] = GPoint(0, root_bounds.size.h/2+10);
