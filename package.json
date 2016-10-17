@@ -1,6 +1,7 @@
 {
     "author": "Morris",
     "dependencies": {
+        "enamel": "^1.2.0",
         "pebble-fctx": "^1.6.0"
     },
     "keywords": [],
