@@ -1,0 +1,95 @@
+[
+{
+  "type": "heading",
+  "id": "main-heading",
+  "defaultValue": "Cut Up",
+  "size": 2
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "Top"
+    },
+    {
+      "type": "color",
+      "messageKey": "color_background_top",
+      "defaultValue": "000000",
+      "label": "Background color",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_top",
+      "defaultValue": "FFFFFF",
+      "label": "Text color",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_outline_top",
+      "defaultValue": "FFFFFF",
+      "label": "Text border color",
+      "sunlight": false,
+      "allowGray": true
+    }
+  ]
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "The cut"
+    },
+    {
+      "type": "color",
+      "messageKey": "color_the_cut",
+      "defaultValue": "000000",
+      "label": "Line color",
+      "sunlight": false,
+      "allowGray": true
+    }
+  ]
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "Bottom"
+    },
+    {
+      "type": "color",
+      "messageKey": "color_background_bottom",
+      "defaultValue": "000000",
+      "label": "Background color",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_bottom",
+      "defaultValue": "55AAFF",
+      "label": "Text color",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_text_outline_bottom",
+      "defaultValue": "55AAFF",
+      "label": "Text border",
+      "sunlight": false,
+      "allowGray": true
+    }
+  ]
+},
+{
+  "type": "submit",
+  "defaultValue": "Save"
+}
+]
