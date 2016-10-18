@@ -33,7 +33,7 @@ static GPathInfo cutting_path_info = {
   .points = (GPoint[]) {{0, 0}, {0, 0}, {0, 0}, {0, 0}}
 };
 
-static Layer* top_layer;
+Layer* top_layer;
 static Layer* top_copy_layer;
 char top_text[3] = "23";
 
@@ -44,7 +44,6 @@ char bottom_text[3] = "59";
 static Layer* cut_layer;
 
 static int16_t unobstructed_offset = 0;
-static int16_t unobstructed_height = 0;
 
 static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
   // create mask bitmap only when needed
@@ -75,14 +74,23 @@ static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
 #endif
     graphics_release_frame_buffer(ctx, buffer);
   }
+  
+  // draw the background to it is there even if the text layers are moved
+  GRect bounds = layer_get_bounds(layer);
+  graphics_context_set_antialiased(ctx, false);
+  graphics_context_set_fill_color(ctx, settings.color_background_top);
+  graphics_fill_rect(ctx, bounds, 0, 0);
+  graphics_context_set_fill_color(ctx, settings.color_background_bottom);
+  gpath_draw_filled(ctx, cutting_path);
+  graphics_fill_rect(ctx, GRect(0, cut[0].y, bounds.size.w, bounds.size.h-cut[1].y), 0, 0);
 }
 
-static void draw_text_with_fctx(GContext* ctx, char* text, uint8_t font, int16_t x, int16_t y, GColor color, GTextAlignment text_alignment, FTextAnchor text_anchor) {
+static void draw_text_with_fctx(GContext* ctx, GPoint origin, char* text, uint8_t font, int16_t x, int16_t y, GColor color, GTextAlignment text_alignment, FTextAnchor text_anchor) {
   fctx_begin_fill(&fctx);
   fctx_set_text_em_height(&fctx, font_peace_sans[font], 105);
   fctx_set_fill_color(&fctx, color);
   fctx_set_pivot(&fctx, FPointZero);
-  fctx_set_offset(&fctx, FPointI(x, y+unobstructed_offset));
+  fctx_set_offset(&fctx, FPointI(x+origin.x, y+origin.y+unobstructed_offset));
   fctx_set_rotation(&fctx, 0);
   fctx_draw_string(&fctx, text, font_peace_sans[font], text_alignment, text_anchor);
   fctx_end_fill(&fctx);
@@ -109,11 +117,11 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
   if(!gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
     fctx_begin_fill(&fctx);
     fctx_set_fill_color(&fctx, settings.color_the_cut_outline_top);
-    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-5+unobstructed_offset));
-    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-5+unobstructed_offset));
-    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2+unobstructed_offset));
-    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2+unobstructed_offset));
-    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-5+unobstructed_offset));
+    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-4+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-4+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-1+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-1+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-4+unobstructed_offset));
     fctx_end_fill(&fctx);
   }
   
@@ -122,30 +130,30 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
      !gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, top_text, FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-33, bounds.size.h/2+40, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, top_text, FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-8, bounds.size.h/2+40, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, top_text, FONT, 12, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 11, bounds.size.h/2+40, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, top_text, FONT, 0, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 0, bounds.size.h/2+40, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_top, settings.color_text_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-33, bounds.size.h/2+40, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+40, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, 12, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 11, bounds.size.h/2+40, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, 0, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 0, bounds.size.h/2+40, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
@@ -181,7 +189,8 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
 
   // draw the background
   graphics_context_set_fill_color(ctx, settings.color_background_bottom);
-  graphics_fill_rect(ctx, GRect(0, copy_window_start, bounds.size.w, bounds.size.h-copy_window_start), 0, 0);
+  gpath_draw_filled(ctx, cutting_path);
+  graphics_fill_rect(ctx, GRect(0, cut[0].y, bounds.size.w, bounds.size.h-cut[0].y), 0, 0);
 
   // init fctx once
   fctx_init_context(&fctx, ctx);
@@ -203,30 +212,30 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
      !gcolor_equal(settings.color_the_cut_outline_bottom, settings.color_background_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bottom_text, FONT, 10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, 10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, bottom_text, FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bottom_text, FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_bottom, settings.color_text_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
@@ -278,11 +287,11 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
   fctx_init_context(&fctx, ctx);
   fctx_begin_fill(&fctx);
   fctx_set_fill_color(&fctx, settings.color_the_cut);
-  fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-2+unobstructed_offset));
-  fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2+unobstructed_offset));
+  fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-1+unobstructed_offset));
+  fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-1+unobstructed_offset));
   fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2+unobstructed_offset));
   fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+2+unobstructed_offset));
-  fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2+unobstructed_offset));
+  fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-1+unobstructed_offset));
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
   
@@ -299,9 +308,7 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
 static void unobstructed_area_change(AnimationProgress progress, void* context) {
   Layer* root_layer = window_get_root_layer(my_window);
   GRect root_bounds = layer_get_bounds(root_layer);
-  GRect unobstructed_bounds = layer_get_unobstructed_bounds(root_layer);
-  unobstructed_height = unobstructed_bounds.size.h;
-  unobstructed_offset = -(root_bounds.size.h/2-unobstructed_height/2);
+  unobstructed_offset = -(root_bounds.size.h/2-layer_get_unobstructed_bounds(root_layer).size.h/2);
   root_bounds.origin.y += unobstructed_offset;
   layer_set_frame(mask_layer, root_bounds);
 }
@@ -330,8 +337,8 @@ static void my_window_load(Window *window) {
   cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-10);
 
   // this is fine tuned to save RAM, it only needs to cover the overlapping area
-  copy_window_start = cut[1].y-10;
-  copy_window_height = cut[0].y-cut[1].y+10;
+  copy_window_start = cut[1].y-5;
+  copy_window_height = cut[0].y-cut[1].y+15;
   
   // create the cutting path
   cutting_path_info.points[0] = cut[0];
@@ -341,9 +348,7 @@ static void my_window_load(Window *window) {
   cutting_path = gpath_create(&cutting_path_info);
 
   // creates a mask to do the cutting
-  GRect mask_bounds = root_bounds;
-  mask_bounds.origin.y += unobstructed_offset;
-  mask_layer = layer_create(mask_bounds);
+  mask_layer = layer_create(GRect(root_bounds.origin.x, root_bounds.origin.y+unobstructed_offset, root_bounds.size.w, root_bounds.size.h));
   layer_set_update_proc(mask_layer, mask_layer_update_proc);
   layer_add_child(root_layer, mask_layer);
 
@@ -351,6 +356,7 @@ static void my_window_load(Window *window) {
   top_layer = layer_create(root_bounds);
   layer_set_update_proc(top_layer, top_layer_update_proc);
   layer_add_child(mask_layer, top_layer);
+  //layer_set_bounds(top_layer, GRect(70, root_bounds.origin.y, root_bounds.size.w, root_bounds.size.h));
 
   // cuts the bottom of the top text
   cutting_layer = layer_create(root_bounds);
@@ -366,6 +372,7 @@ static void my_window_load(Window *window) {
   bottom_layer = layer_create(root_bounds);
   layer_set_update_proc(bottom_layer, bottom_layer_update_proc);
   layer_add_child(mask_layer, bottom_layer);
+  //layer_set_bounds(bottom_layer, GRect(-70, root_bounds.origin.y, root_bounds.size.w, root_bounds.size.h));
 
   // copies the cut top text from the backbuffer over the bottom text
   bottom_copy_layer = layer_create(root_bounds);

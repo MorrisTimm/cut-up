@@ -10,7 +10,7 @@
   "items": [
     {
       "type": "heading",
-      "defaultValue": "Top"
+      "defaultValue": "Hours"
     },
     {
       "type": "color",
@@ -76,7 +76,7 @@
   "items": [
     {
       "type": "heading",
-      "defaultValue": "Bottom"
+      "defaultValue": "Minutes"
     },
     {
       "type": "color",
