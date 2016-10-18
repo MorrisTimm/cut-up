@@ -44,7 +44,7 @@ def build(ctx):
         ctx.set_group(ctx.env.PLATFORM_NAME)
         app_elf = '{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
         #ctx.pbl_program(source=ctx.path.ant_glob('src/c/**/*.c'), target=app_elf)
-        ctx(rule = enamel, source='src/js/config.json', target=['enamel.c', 'enamel.h'])
+        ctx(rule = enamel, source='src/pkjs/config.json', target=['enamel.c', 'enamel.h'])
         ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c') + ['enamel.c'], target=app_elf)
 
         if build_worker:
