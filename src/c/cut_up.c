@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fctx.h>
-#include "cutup.h"
+#include "cut_up.h"
 
 extern void start();
 
@@ -43,6 +43,9 @@ char bottom_text[3] = "59";
 
 static Layer* cut_layer;
 
+static int16_t unobstructed_offset = 0;
+static int16_t unobstructed_height = 0;
+
 static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
   // create mask bitmap only when needed
   if(!mask_bitmap) {
@@ -59,7 +62,7 @@ static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
 #ifdef PBL_COLOR
     uint16_t mask_bytes_per_row = gbitmap_get_bytes_per_row(mask_bitmap);
     for(int i = copy_window_start; i < copy_window_start+copy_window_height; ++i) {
-      GBitmapDataRowInfo row_info = gbitmap_get_data_row_info(buffer, i);
+      GBitmapDataRowInfo row_info = gbitmap_get_data_row_info(buffer, i+unobstructed_offset);
       for(int j = row_info.min_x; j < row_info.max_x; ++j) {
         if(row_info.data[j] == GColorWhite.argb) {
           bw_bitmap_data_set_pixel(gbitmap_get_data(mask_bitmap), mask_bytes_per_row, j, i-copy_window_start);
@@ -68,7 +71,7 @@ static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
     }
 #else
     uint16_t bytes_per_row = gbitmap_get_bytes_per_row(buffer);
-    memcpy(gbitmap_get_data(mask_bitmap), &(gbitmap_get_data(buffer)[copy_window_start*bytes_per_row]), copy_window_height*bytes_per_row);
+    memcpy(gbitmap_get_data(mask_bitmap), &(gbitmap_get_data(buffer)[(copy_window_start+unobstructed_offset)*bytes_per_row]), copy_window_height*bytes_per_row);
 #endif
     graphics_release_frame_buffer(ctx, buffer);
   }
@@ -79,7 +82,7 @@ static void draw_text_with_fctx(GContext* ctx, char* text, uint8_t font, int16_t
   fctx_set_text_em_height(&fctx, font_peace_sans[font], 105);
   fctx_set_fill_color(&fctx, color);
   fctx_set_pivot(&fctx, FPointZero);
-  fctx_set_offset(&fctx, FPointI(x, y));
+  fctx_set_offset(&fctx, FPointI(x, y+unobstructed_offset));
   fctx_set_rotation(&fctx, 0);
   fctx_draw_string(&fctx, text, font_peace_sans[font], text_alignment, text_anchor);
   fctx_end_fill(&fctx);
@@ -106,11 +109,11 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
   if(!gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
     fctx_begin_fill(&fctx);
     fctx_set_fill_color(&fctx, settings.color_the_cut_outline_top);
-    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-5));
-    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-5));
-    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2));
-    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2));
-    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-5));
+    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-5+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-5+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-5+unobstructed_offset));
     fctx_end_fill(&fctx);
   }
   
@@ -160,7 +163,7 @@ static void top_copy_layer_update_proc(Layer* layer, GContext* ctx) {
   // copy the center window from the framebuffer into the backbuffer bitmap
 #ifdef PBL_COLOR
   for(int i = copy_window_start; i < copy_window_start+copy_window_height; ++i) {
-    GBitmapDataRowInfo from_row_info = gbitmap_get_data_row_info(buffer, i);
+    GBitmapDataRowInfo from_row_info = gbitmap_get_data_row_info(buffer, i+unobstructed_offset);
     GBitmapDataRowInfo to_row_info = gbitmap_get_data_row_info(copy_bitmap, i-copy_window_start);
     for(int j = from_row_info.min_x; j < from_row_info.max_x; ++j) {
       to_row_info.data[j] = from_row_info.data[j];
@@ -168,7 +171,7 @@ static void top_copy_layer_update_proc(Layer* layer, GContext* ctx) {
   }
 #else
   uint16_t bytes_per_row = gbitmap_get_bytes_per_row(buffer);
-  memcpy(gbitmap_get_data(copy_bitmap), &(gbitmap_get_data(buffer)[copy_window_start*bytes_per_row]), copy_window_height*bytes_per_row);
+  memcpy(gbitmap_get_data(copy_bitmap), &(gbitmap_get_data(buffer)[(copy_window_start+unobstructed_offset)*bytes_per_row]), copy_window_height*bytes_per_row);
 #endif
   graphics_release_frame_buffer(ctx, buffer);
 }
@@ -187,11 +190,11 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
   if(!gcolor_equal(settings.color_the_cut_outline_bottom, settings.color_background_bottom)) {
     fctx_begin_fill(&fctx);
     fctx_set_fill_color(&fctx, settings.color_the_cut_outline_bottom);
-    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y+2));
-    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2));
-    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+5));
-    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+5));
-    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+2));
+    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y+2+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+5+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+5+unobstructed_offset));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+2+unobstructed_offset));
     fctx_end_fill(&fctx);
   }
   
@@ -243,7 +246,7 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
   for(int i = copy_window_start; i < copy_window_start+copy_window_height; ++i) {
 #ifdef PBL_COLOR
     GBitmapDataRowInfo from_row_info = gbitmap_get_data_row_info(copy_bitmap, i-copy_window_start);
-    GBitmapDataRowInfo to_row_info = gbitmap_get_data_row_info(buffer, i);
+    GBitmapDataRowInfo to_row_info = gbitmap_get_data_row_info(buffer, i+unobstructed_offset);
     for(int j = from_row_info.min_x; j < from_row_info.max_x; ++j) {
       // use the mask to leave the relevant pixels from the bottom layer intact
       if(bw_bitmap_data_get_value(mask_bytes, mask_bytes_per_row, j, i-copy_window_start)) {
@@ -259,9 +262,9 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
       // use the mask to leave the relevant pixels from the bottom layer intact
       if(bw_bitmap_data_get_value(mask_bytes, mask_bytes_per_row, j, i-copy_window_start)) {
         if(bw_bitmap_data_get_value(copy_bytes, copy_bytes_per_row, j, i-copy_window_start)) {
-          bw_bitmap_data_set_pixel(bytes, bytes_per_row, j, i);
+          bw_bitmap_data_set_pixel(bytes, bytes_per_row, j, i+unobstructed_offset);
         } else {
-          bw_bitmap_data_clear_pixel(bytes, bytes_per_row, j, i);
+          bw_bitmap_data_clear_pixel(bytes, bytes_per_row, j, i+unobstructed_offset);
         }
       }
     }
@@ -275,11 +278,11 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
   fctx_init_context(&fctx, ctx);
   fctx_begin_fill(&fctx);
   fctx_set_fill_color(&fctx, settings.color_the_cut);
-  fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-2));
-  fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2));
-  fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2));
-  fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+2));
-  fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2));
+  fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-2+unobstructed_offset));
+  fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2+unobstructed_offset));
+  fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2+unobstructed_offset));
+  fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+2+unobstructed_offset));
+  fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2+unobstructed_offset));
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
   
@@ -292,6 +295,18 @@ static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
 #endif
 }
 
+#if PBL_API_EXISTS(unobstructed_area_service_subscribe) || defined PEEK_TEST
+static void unobstructed_area_change(AnimationProgress progress, void* context) {
+  Layer* root_layer = window_get_root_layer(my_window);
+  GRect root_bounds = layer_get_bounds(root_layer);
+  GRect unobstructed_bounds = layer_get_unobstructed_bounds(root_layer);
+  unobstructed_height = unobstructed_bounds.size.h;
+  unobstructed_offset = -(root_bounds.size.h/2-unobstructed_height/2);
+  root_bounds.origin.y += unobstructed_offset;
+  layer_set_frame(mask_layer, root_bounds);
+}
+#endif // PBL_API_EXISTS(unobstructed_area_service_subscribe)
+
 static void my_window_load(Window *window) {
   Layer* root_layer = window_get_root_layer(window);
   GRect root_bounds = layer_get_bounds(root_layer);
@@ -300,6 +315,16 @@ static void my_window_load(Window *window) {
   font_peace_sans[FONT] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS);
   font_peace_sans[OUTLINE_FONT] = ffont_create_from_resource(RESOURCE_ID_FONT_PEACE_SANS_OUTLINE);
   
+#if PBL_API_EXISTS(unobstructed_area_service_subscribe) || defined PEEK_TEST
+  GRect unobstructed_bounds = layer_get_unobstructed_bounds(root_layer);
+  unobstructed_offset = -(root_bounds.size.h/2-unobstructed_bounds.size.h/2);
+
+  UnobstructedAreaHandlers handlers = {
+    .change = unobstructed_area_change,
+  };
+  unobstructed_area_service_subscribe(handlers, NULL);
+#endif // PBL_API_EXISTS(unobstructed_area_service_subscribe)
+
   // the endpoints of the cutting line
   cut[0] = GPoint(0, root_bounds.size.h/2+10);
   cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-10);
@@ -316,48 +341,50 @@ static void my_window_load(Window *window) {
   cutting_path = gpath_create(&cutting_path_info);
 
   // creates a mask to do the cutting
-  mask_layer = layer_create(root_bounds);
+  GRect mask_bounds = root_bounds;
+  mask_bounds.origin.y += unobstructed_offset;
+  mask_layer = layer_create(mask_bounds);
   layer_set_update_proc(mask_layer, mask_layer_update_proc);
   layer_add_child(root_layer, mask_layer);
 
   // draws the top text
   top_layer = layer_create(root_bounds);
   layer_set_update_proc(top_layer, top_layer_update_proc);
-  layer_add_child(root_layer, top_layer);
+  layer_add_child(mask_layer, top_layer);
 
   // cuts the bottom of the top text
   cutting_layer = layer_create(root_bounds);
   layer_set_update_proc(cutting_layer, cutting_layer_update_proc);
-  layer_add_child(root_layer, cutting_layer);
+  layer_add_child(mask_layer, cutting_layer);
   
   // copies the cut top text to backbuffer
   top_copy_layer = layer_create(root_bounds);
   layer_set_update_proc(top_copy_layer, top_copy_layer_update_proc);
-  layer_add_child(root_layer, top_copy_layer);
+  layer_add_child(mask_layer, top_copy_layer);
 
   // draws the bottom text
   bottom_layer = layer_create(root_bounds);
   layer_set_update_proc(bottom_layer, bottom_layer_update_proc);
-  layer_add_child(root_layer, bottom_layer);
+  layer_add_child(mask_layer, bottom_layer);
 
   // copies the cut top text from the backbuffer over the bottom text
   bottom_copy_layer = layer_create(root_bounds);
   layer_set_update_proc(bottom_copy_layer, bottom_copy_layer_update_proc);
-  layer_add_child(root_layer, bottom_copy_layer);
+  layer_add_child(mask_layer, bottom_copy_layer);
 
   // draws the cut line
   cut_layer = layer_create(root_bounds);
   layer_set_update_proc(cut_layer, cut_layer_update_proc);
-  layer_add_child(root_layer, cut_layer);
+  layer_add_child(mask_layer, cut_layer);
   
   start();
 }
 
-void cutting_edge_update() {
+void cut_up_update() {
   layer_mark_dirty(window_get_root_layer(my_window));
 }
 
-void cutting_edge_init() {
+void cut_up_init() {
   my_window = window_create();
   window_set_window_handlers(my_window, (WindowHandlers) {
     .load = my_window_load,
@@ -366,6 +393,6 @@ void cutting_edge_init() {
   window_stack_push(my_window, true);
 }
 
-void cutting_edge_deinit() {
+void cut_up_deinit() {
   window_destroy(my_window);
 }

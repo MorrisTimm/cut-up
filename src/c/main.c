@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include <pebble-events/pebble-events.h>
 #include "enamel.h"
-#include "cutup.h"
+#include "cut_up.h"
 
 extern char top_text[3];
 extern char bottom_text[3];
@@ -22,12 +22,12 @@ static void load_settings() {
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
   strftime(top_text, 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
   strftime(bottom_text, 3, "%M", tick_time);
-  cutting_edge_update();
+  cut_up_update();
 }
 
 static void enamel_settings_received_handler(void *context){
   load_settings();
-  cutting_edge_update();
+  cut_up_update();
 }
 
 void start() {
@@ -42,11 +42,11 @@ void handle_init(void) {
   enamel_settings_received_subscribe(enamel_settings_received_handler, NULL);
   events_app_message_open();
   load_settings();
-  cutting_edge_init();
+  cut_up_init();
 }
 
 void handle_deinit(void) {
-  cutting_edge_deinit();
+  cut_up_deinit();
   enamel_deinit();
 }
 

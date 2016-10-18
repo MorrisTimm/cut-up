@@ -13,6 +13,6 @@ typedef struct {
   GColor color_the_cut_outline_bottom;
 } Settings;
 
-void cutting_edge_update();
-void cutting_edge_init();
-void cutting_edge_deinit();
+void cut_up_update();
+void cut_up_init();
+void cut_up_deinit();
