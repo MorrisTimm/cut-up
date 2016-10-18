@@ -1,1 +1,1 @@
-# Cutting Edge watchface
+# Cut/up watchface
