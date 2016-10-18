@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include <pebble-events/pebble-events.h>
 #include "enamel.h"
-#include "cutting_edge.h"
+#include "cutup.h"
 
 extern char top_text[3];
 extern char bottom_text[3];
@@ -15,6 +15,8 @@ static void load_settings() {
   settings.color_text_outline_top = enamel_get_color_text_outline_top();
   settings.color_text_outline_bottom = enamel_get_color_text_outline_bottom();
   settings.color_the_cut = enamel_get_color_the_cut();
+  settings.color_the_cut_outline_top = enamel_get_color_the_cut_outline_top();
+  settings.color_the_cut_outline_bottom = enamel_get_color_the_cut_outline_bottom();
 }
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {

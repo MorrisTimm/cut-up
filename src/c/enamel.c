@@ -62,6 +62,22 @@ GColor enamel_get_color_the_cut(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'color_the_cut_outline_top'
+GColor enamel_get_color_the_cut_outline_top(){
+	Tuple* tuple = dict_find(&s_dict, 1805845070);
+	return tuple ? GColorFromHEX(tuple->value->int32) : GColorFromHEX(0x000000);
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'color_the_cut_outline_bottom'
+GColor enamel_get_color_the_cut_outline_bottom(){
+	Tuple* tuple = dict_find(&s_dict, 1636910343);
+	return tuple ? GColorFromHEX(tuple->value->int32) : GColorFromHEX(0x000000);
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_background_bottom'
 GColor enamel_get_color_background_bottom(){
 	Tuple* tuple = dict_find(&s_dict, 427728357);
@@ -95,6 +111,8 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
+		+ 7 + 4
+		+ 7 + 4
 ;
 }
 
@@ -103,6 +121,8 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_text_top) return 3825572583;
 	if( key == MESSAGE_KEY_color_text_outline_top) return 2679461552;
 	if( key == MESSAGE_KEY_color_the_cut) return 1009183225;
+	if( key == MESSAGE_KEY_color_the_cut_outline_top) return 1805845070;
+	if( key == MESSAGE_KEY_color_the_cut_outline_bottom) return 1636910343;
 	if( key == MESSAGE_KEY_color_background_bottom) return 427728357;
 	if( key == MESSAGE_KEY_color_text_bottom) return 1975043952;
 	if( key == MESSAGE_KEY_color_text_outline_bottom) return 3680561045;

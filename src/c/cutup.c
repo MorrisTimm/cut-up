@@ -1,12 +1,13 @@
 #include <pebble.h>
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fctx.h>
-#include "cutting_edge.h"
+#include "cutup.h"
 
 extern void start();
 
 #define bw_bitmap_data_get_value(BMP, BPR, X, Y) (((*((BMP)+(Y)*(BPR)+(X)/8)) & (1 << (X)%8)) ? 1 : 0)
 #define bw_bitmap_data_set_pixel(BMP, BPR, X, Y) (*((BMP)+(Y)*(BPR)+(X)/8)) |= (1 << (X)%8)
+#define bw_bitmap_data_clear_pixel(BMP, BPR, X, Y) (*((BMP)+(Y)*(BPR)+(X)/8)) &= ~(1 << (X)%8)
 
 //#define ALTERNATE_ALIGNMENT
 
@@ -42,19 +43,6 @@ char bottom_text[3] = "59";
 
 static Layer* cut_layer;
 
-static void draw_text(GContext* ctx, char* text, uint8_t font, int16_t x, int16_t y, GColor color, GTextAlignment text_alignment, FTextAnchor text_anchor) {
-  fctx_init_context(&fctx, ctx);
-  fctx_begin_fill(&fctx);
-  fctx_set_text_em_height(&fctx, font_peace_sans[font], 105);
-  fctx_set_fill_color(&fctx, color);
-  fctx_set_pivot(&fctx, FPointZero);
-  fctx_set_offset(&fctx, FPointI(x, y));
-  fctx_set_rotation(&fctx, 0);
-  fctx_draw_string(&fctx, text, font_peace_sans[font], text_alignment, text_anchor);
-  fctx_end_fill(&fctx);
-  fctx_deinit_context(&fctx);
-}
-
 static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
   // create mask bitmap only when needed
   if(!mask_bitmap) {
@@ -86,6 +74,17 @@ static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
   }
 }
 
+static void draw_text_with_fctx(GContext* ctx, char* text, uint8_t font, int16_t x, int16_t y, GColor color, GTextAlignment text_alignment, FTextAnchor text_anchor) {
+  fctx_begin_fill(&fctx);
+  fctx_set_text_em_height(&fctx, font_peace_sans[font], 105);
+  fctx_set_fill_color(&fctx, color);
+  fctx_set_pivot(&fctx, FPointZero);
+  fctx_set_offset(&fctx, FPointI(x, y));
+  fctx_set_rotation(&fctx, 0);
+  fctx_draw_string(&fctx, text, font_peace_sans[font], text_alignment, text_anchor);
+  fctx_end_fill(&fctx);
+}
+
 static void cutting_layer_update_proc(Layer* layer, GContext* ctx) {
   // cut off the bottom by painting over it in the background color
   graphics_context_set_fill_color(ctx, settings.color_background_bottom);
@@ -100,37 +99,55 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
   graphics_context_set_fill_color(ctx, settings.color_background_top);
   graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, copy_window_start+copy_window_height), 0, 0);
 
+  // init fctx once
+  fctx_init_context(&fctx, ctx);
+
+  // draw the cuting line border
+  if(!gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
+    fctx_begin_fill(&fctx);
+    fctx_set_fill_color(&fctx, settings.color_the_cut_outline_top);
+    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y-5));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-5));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y-2));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-2));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y-5));
+    fctx_end_fill(&fctx);
+  }
+  
   // draw the text
-  if(!gcolor_equal(settings.color_text_top, settings.color_background_top)) {
+  if(!gcolor_equal(settings.color_text_top, settings.color_background_top) ||
+     !gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text(ctx, top_text, FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text(ctx, top_text, FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text(ctx, top_text, FONT, 12, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, FONT, 12, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text(ctx, top_text, FONT, 0, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, FONT, 0, bounds.size.h/2+38, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_top, settings.color_text_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text(ctx, top_text, OUTLINE_FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, bounds.size.w-32, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text(ctx, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text(ctx, top_text, OUTLINE_FONT, 12, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, 12, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text(ctx, top_text, OUTLINE_FONT, 0, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, top_text, OUTLINE_FONT, 0, bounds.size.h/2+38, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
+  // deinit fctx once
+  fctx_deinit_context(&fctx);
 }
 
 static void top_copy_layer_update_proc(Layer* layer, GContext* ctx) {
@@ -163,37 +180,55 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
   graphics_context_set_fill_color(ctx, settings.color_background_bottom);
   graphics_fill_rect(ctx, GRect(0, copy_window_start, bounds.size.w, bounds.size.h-copy_window_start), 0, 0);
 
+  // init fctx once
+  fctx_init_context(&fctx, ctx);
+
+  // draw the cuting line border
+  if(!gcolor_equal(settings.color_the_cut_outline_bottom, settings.color_background_bottom)) {
+    fctx_begin_fill(&fctx);
+    fctx_set_fill_color(&fctx, settings.color_the_cut_outline_bottom);
+    fctx_move_to(&fctx, FPointI(cut[0].x, cut[0].y+2));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+2));
+    fctx_line_to(&fctx, FPointI(cut[1].x, cut[1].y+5));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+5));
+    fctx_line_to(&fctx, FPointI(cut[0].x, cut[0].y+2));
+    fctx_end_fill(&fctx);
+  }
+  
   // draw the text
-  if(!gcolor_equal(settings.color_text_bottom, settings.color_background_bottom)) {
+  if(!gcolor_equal(settings.color_text_bottom, settings.color_background_bottom) ||
+     !gcolor_equal(settings.color_the_cut_outline_bottom, settings.color_background_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text(ctx, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text(ctx, bottom_text, FONT, 10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, FONT, 10, bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text(ctx, bottom_text, FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text(ctx, bottom_text, FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_bottom, settings.color_text_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND  
-    draw_text(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text(ctx, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND  
-    draw_text(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT, bounds.size.w-12,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text(ctx, bottom_text, OUTLINE_FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bottom_text, OUTLINE_FONT, bounds.size.w,bounds.size.h/2-12, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
+  // deinit fctx once
+  fctx_deinit_context(&fctx);
 }
 
 static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
@@ -222,9 +257,12 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
     uint8_t* copy_bytes = gbitmap_get_data(copy_bitmap);
     for(int j = 0; j < buffer_size.w; ++j) {
       // use the mask to leave the relevant pixels from the bottom layer intact
-      if(bw_bitmap_data_get_value(copy_bytes, copy_bytes_per_row, j, i-copy_window_start) &&
-         bw_bitmap_data_get_value(mask_bytes, mask_bytes_per_row, j, i-copy_window_start)) {
+      if(bw_bitmap_data_get_value(mask_bytes, mask_bytes_per_row, j, i-copy_window_start)) {
+        if(bw_bitmap_data_get_value(copy_bytes, copy_bytes_per_row, j, i-copy_window_start)) {
           bw_bitmap_data_set_pixel(bytes, bytes_per_row, j, i);
+        } else {
+          bw_bitmap_data_clear_pixel(bytes, bytes_per_row, j, i);
+        }
       }
     }
 #endif

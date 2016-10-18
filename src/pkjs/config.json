@@ -2,8 +2,8 @@
 {
   "type": "heading",
   "id": "main-heading",
-  "defaultValue": "Cut Up",
-  "size": 2
+  "defaultValue": "Cut/up configuration",
+  "size": 3
 },
 {
   "type": "section",
@@ -47,9 +47,25 @@
     },
     {
       "type": "color",
+      "messageKey": "color_the_cut_outline_top",
+      "defaultValue": "000000",
+      "label": "Top border color",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
       "messageKey": "color_the_cut",
       "defaultValue": "000000",
       "label": "Line color",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_the_cut_outline_bottom",
+      "defaultValue": "000000",
+      "label": "Bottom border color",
       "sunlight": false,
       "allowGray": true
     }
@@ -82,7 +98,7 @@
       "type": "color",
       "messageKey": "color_text_outline_bottom",
       "defaultValue": "55AAFF",
-      "label": "Text border",
+      "label": "Text border color",
       "sunlight": false,
       "allowGray": true
     }

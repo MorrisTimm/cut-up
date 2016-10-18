@@ -28,6 +28,16 @@ GColor enamel_get_color_the_cut();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'color_the_cut_outline_top'
+GColor enamel_get_color_the_cut_outline_top();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'color_the_cut_outline_bottom'
+GColor enamel_get_color_the_cut_outline_bottom();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_background_bottom'
 GColor enamel_get_color_background_bottom();
 // -----------------------------------------------------
