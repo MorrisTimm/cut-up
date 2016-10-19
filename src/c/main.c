@@ -3,9 +3,8 @@
 #include "enamel.h"
 #include "cut_up.h"
 
-extern char top_text[3];
-extern char bottom_text[3];
 extern Settings settings;
+extern char update_text[2][3];
 
 static void load_settings() {
   settings.color_background_top = enamel_get_color_background_top();
@@ -17,17 +16,19 @@ static void load_settings() {
   settings.color_the_cut = enamel_get_color_the_cut();
   settings.color_the_cut_outline_top = enamel_get_color_the_cut_outline_top();
   settings.color_the_cut_outline_bottom = enamel_get_color_the_cut_outline_bottom();
+  settings.animations = enamel_get_animations();
 }
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
-  strftime(top_text, 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
-  strftime(bottom_text, 3, "%M", tick_time);
-  cut_up_update();
+  strftime(update_text[0], 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
+  strftime(update_text[1], 3, "%M", tick_time);
+  cut_up_update(units_changed & HOUR_UNIT, units_changed & MINUTE_UNIT);
+  //cut_up_update(units_changed & MINUTE_UNIT, units_changed & SECOND_UNIT && 0 == (tick_time->tm_sec % 10));
 }
 
 static void enamel_settings_received_handler(void *context){
   load_settings();
-  cut_up_update();
+  cut_up_update(false, false);
 }
 
 void start() {
@@ -35,6 +36,7 @@ void start() {
   struct tm* tick_time = localtime(&now);
   tick_handler(tick_time, 0);
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  //tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
 }
 
 void handle_init(void) {

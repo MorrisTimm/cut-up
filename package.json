@@ -21,7 +21,8 @@
             "color_text_outline_bottom",
             "color_the_cut",
             "color_the_cut_outline_top",
-            "color_the_cut_outline_bottom"
+            "color_the_cut_outline_bottom",
+            "animations"
         ],
         "projectType": "native",
         "resources": {
@@ -52,7 +53,8 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "emery"
         ],
         "uuid": "10bf9efe-d8ea-43a2-aab3-34ed2ecd8287",
         "watchapp": {

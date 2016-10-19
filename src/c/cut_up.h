@@ -11,8 +11,9 @@ typedef struct {
   GColor color_the_cut;
   GColor color_the_cut_outline_top;
   GColor color_the_cut_outline_bottom;
+  uint8_t animations;
 } Settings;
 
-void cut_up_update();
+void cut_up_update(bool hours, bool minutes);
 void cut_up_init();
 void cut_up_deinit();
