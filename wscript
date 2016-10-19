@@ -4,9 +4,11 @@
 # Feel free to customize this to your needs.
 #
 
+# for enamel
 import sys
 sys.path.append('node_modules')
 from enamel.enamel import enamel
+from enamel.enamel import generate
 
 import os.path
 try:
@@ -25,7 +27,8 @@ def options(ctx):
 
 def configure(ctx):
     ctx.load('pebble_sdk')
-
+    # for enamel
+    generate(configFile='src/pkjs/config.json', outputDir='src/c')
 
 def build(ctx):
     if False and hint is not None:
@@ -43,9 +46,10 @@ def build(ctx):
         ctx.set_env(ctx.all_envs[p])
         ctx.set_group(ctx.env.PLATFORM_NAME)
         app_elf = '{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
-        #ctx.pbl_program(source=ctx.path.ant_glob('src/c/**/*.c'), target=app_elf)
-        ctx(rule = enamel, source='src/pkjs/config.json', target=['enamel.c', 'enamel.h'])
-        ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c') + ['enamel.c'], target=app_elf)
+        ctx.pbl_program(source=ctx.path.ant_glob('src/c/**/*.c'), target=app_elf)
+        # for enamel - old
+        #ctx(rule = enamel, source='src/pkjs/config.json', target=['enamel.c', 'enamel.h'])
+        #ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c') + ['enamel.c'], target=app_elf)
 
         if build_worker:
             worker_elf = '{}/pebble-worker.elf'.format(ctx.env.BUILD_DIR)
