@@ -2,7 +2,7 @@
 {
   "type": "heading",
   "id": "main-heading",
-  "defaultValue": "Cut/up configuration",
+  "defaultValue": "Cut/up",
   "size": 1
 },
 {
@@ -57,7 +57,15 @@
       "type": "color",
       "messageKey": "color_the_cut",
       "defaultValue": "000000",
-      "label": "Line color",
+      "label": "Line color (BT connected)",
+      "sunlight": false,
+      "allowGray": true
+    },
+    {
+      "type": "color",
+      "messageKey": "color_the_cut_disconnected",
+      "defaultValue": "FF0000",
+      "label": "Line color (BT disconnected)",
       "sunlight": false,
       "allowGray": true
     },
@@ -112,10 +120,120 @@
       "defaultValue": "Other settings"
     },
     {
-      "type": "toggle",
+      "type": "select",
       "messageKey": "animations",
       "defaultValue": 1,
-      "label": "Animations"
+      "label": "Animations",
+      "options": [
+        {
+          "label": "Off",
+          "value": 0
+        },
+        {
+          "label": "Startup and transitions",
+          "value": 1
+        },
+        {
+          "label": "Startup only",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "messageKey": "vibrate_on_bt_disconnect",
+      "defaultValue": 3,
+      "label": "Vibration on BT disconnect",
+      "options": [
+        {
+          "label": "None",
+          "value": 0
+        },
+        {
+          "label": "Short",
+          "value": 1
+        },
+        {
+          "label": "Long",
+          "value": 2
+        },
+        {
+          "label": "Double",
+          "value": 3
+        },
+        {
+          "label": "Heartbeat",
+          "value": 4
+        },
+        {
+          "label": "Halfbeat",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "messageKey": "vibrate_on_bt_reconnect",
+      "defaultValue": 3,
+      "label": "Vibration on BT reconnect",
+      "options": [
+        {
+          "label": "None",
+          "value": 0
+        },
+        {
+          "label": "Short",
+          "value": 1
+        },
+        {
+          "label": "Long",
+          "value": 2
+        },
+        {
+          "label": "Double",
+          "value": 3
+        },
+        {
+          "label": "Heartbeat",
+          "value": 4
+        },
+        {
+          "label": "Halfbeat",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "messageKey": "hourly_vibration",
+      "defaultValue": 0,
+      "label": "Hourly vibration",
+      "options": [
+        {
+          "label": "None",
+          "value": 0
+        },
+        {
+          "label": "Short",
+          "value": 1
+        },
+        {
+          "label": "Long",
+          "value": 2
+        },
+        {
+          "label": "Double",
+          "value": 3
+        },
+        {
+          "label": "Heartbeat",
+          "value": 4
+        },
+        {
+          "label": "Halfbeat",
+          "value": 5
+        }
+      ]
     }
   ]
 },

@@ -2,6 +2,28 @@
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fctx.h>
 #include "cut_up.h"
+#include "bluetooth.h"
+#include "enamel.h"
+
+// fix for SDK 4.1.4
+#ifndef PBL_DISPLAY_WIDTH
+#if defined(PBL_PLATFORM_EMERY)
+#define PBL_DISPLAY_WIDTH 200
+#elif defined(PBL_PLATFORM_CHALK)
+#define PBL_DISPLAY_WIDTH 180
+#else
+#define PBL_DISPLAY_WIDTH 144
+#endif
+#endif
+#ifndef PBL_DISPLAY_HEIGHT
+#if defined(PBL_PLATFORM_EMERY)
+#define PBL_DISPLAY_HEIGHT 228
+#elif defined(PBL_PLATFORM_CHALK)
+#define PBL_DISPLAY_HEIGHT 180
+#else
+#define PBL_DISPLAY_HEIGHT 168
+#endif
+#endif
 
 extern void start();
 
@@ -53,6 +75,7 @@ static char bottom_text[3] = "59";
 static Layer* cut_layer;
 
 static int16_t unobstructed_offset = 0;
+static bool is_in_focus = false;
 
 static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
   // create mask bitmap only when needed
@@ -296,7 +319,7 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
 static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
   // draw the cuting line
   fctx_init_context(&fctx, ctx);
-  draw_cut_line_with_fctx(ctx, -1, PBL_DISPLAY_WIDTH > 180 ?  3 :  2, settings.color_the_cut);
+  draw_cut_line_with_fctx(ctx, -1, PBL_DISPLAY_WIDTH > 180 ?  3 :  2, bluetooth_connected() ? settings.color_the_cut : settings.color_the_cut_disconnected);
   fctx_deinit_context(&fctx);
   
 #if 0 // center lines to help with adjustment
@@ -354,6 +377,10 @@ static void animate(bool top, bool in, bool follow_up) {
 static void did_focus_handler(bool in_focus) {
   // update if the focus has been regained
   if(in_focus) {
+    if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+      app_focus_service_unsubscribe();
+    }
+    is_in_focus = in_focus;
     animate(true, true, false);
     animate(false, true, false);
   }
@@ -362,6 +389,7 @@ static void did_focus_handler(bool in_focus) {
 static void will_focus_handler(bool in_focus) {
   // update when the watchface is about to lose focus
   if(!in_focus) {
+    is_in_focus = in_focus;
     animate(true, false, false);
     animate(false, false, false);
   }
@@ -449,11 +477,12 @@ static void my_window_load(Window *window) {
     });
   }
 
+  bluetooth_init();
   start();
 }
 
 void cut_up_update(bool top, bool bottom) {
-  if(settings.animations && (top || bottom)) {
+  if(ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations && (top || bottom) && is_in_focus) {
     if(top) {
       animate(true, false, true);
     }
@@ -477,5 +506,10 @@ void cut_up_init() {
 }
 
 void cut_up_deinit() {
+  bluetooth_deinit();
   window_destroy(my_window);
+}
+
+void bluetooth_listener(bool connected) {
+  cut_up_update(false, false);
 }

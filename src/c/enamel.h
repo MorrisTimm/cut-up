@@ -33,6 +33,11 @@ GColor enamel_get_color_the_cut();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'color_the_cut_disconnected'
+GColor enamel_get_color_the_cut_disconnected();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_the_cut_outline_bottom'
 GColor enamel_get_color_the_cut_outline_bottom();
 // -----------------------------------------------------
@@ -54,7 +59,51 @@ GColor enamel_get_color_text_outline_bottom();
 
 // -----------------------------------------------------
 // Getter for 'animations'
-bool enamel_get_animations();
+typedef enum {
+	ANIMATIONS_OFF = 0,
+	ANIMATIONS_STARTUP_AND_TRANSITIONS = 1,
+	ANIMATIONS_STARTUP_ONLY = 2,
+} ANIMATIONSValue;
+ANIMATIONSValue enamel_get_animations();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'vibrate_on_bt_disconnect'
+typedef enum {
+	VIBRATE_ON_BT_DISCONNECT_NONE = 0,
+	VIBRATE_ON_BT_DISCONNECT_SHORT = 1,
+	VIBRATE_ON_BT_DISCONNECT_LONG = 2,
+	VIBRATE_ON_BT_DISCONNECT_DOUBLE = 3,
+	VIBRATE_ON_BT_DISCONNECT_HEARTBEAT = 4,
+	VIBRATE_ON_BT_DISCONNECT_HALFBEAT = 5,
+} VIBRATE_ON_BT_DISCONNECTValue;
+VIBRATE_ON_BT_DISCONNECTValue enamel_get_vibrate_on_bt_disconnect();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'vibrate_on_bt_reconnect'
+typedef enum {
+	VIBRATE_ON_BT_RECONNECT_NONE = 0,
+	VIBRATE_ON_BT_RECONNECT_SHORT = 1,
+	VIBRATE_ON_BT_RECONNECT_LONG = 2,
+	VIBRATE_ON_BT_RECONNECT_DOUBLE = 3,
+	VIBRATE_ON_BT_RECONNECT_HEARTBEAT = 4,
+	VIBRATE_ON_BT_RECONNECT_HALFBEAT = 5,
+} VIBRATE_ON_BT_RECONNECTValue;
+VIBRATE_ON_BT_RECONNECTValue enamel_get_vibrate_on_bt_reconnect();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'hourly_vibration'
+typedef enum {
+	HOURLY_VIBRATION_NONE = 0,
+	HOURLY_VIBRATION_SHORT = 1,
+	HOURLY_VIBRATION_LONG = 2,
+	HOURLY_VIBRATION_DOUBLE = 3,
+	HOURLY_VIBRATION_HEARTBEAT = 4,
+	HOURLY_VIBRATION_HALFBEAT = 5,
+} HOURLY_VIBRATIONValue;
+HOURLY_VIBRATIONValue enamel_get_hourly_vibration();
 // -----------------------------------------------------
 
 void enamel_init();

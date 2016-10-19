@@ -70,6 +70,14 @@ GColor enamel_get_color_the_cut(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'color_the_cut_disconnected'
+GColor enamel_get_color_the_cut_disconnected(){
+	Tuple* tuple = dict_find(&s_dict, 1436604224);
+	return tuple ? GColorFromHEX(tuple->value->int32) : GColorFromHEX(0xFF0000);
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_the_cut_outline_bottom'
 GColor enamel_get_color_the_cut_outline_bottom(){
 	Tuple* tuple = dict_find(&s_dict, 1636910343);
@@ -103,9 +111,33 @@ GColor enamel_get_color_text_outline_bottom(){
 
 // -----------------------------------------------------
 // Getter for 'animations'
-bool enamel_get_animations(){
+ANIMATIONSValue enamel_get_animations(){
 	Tuple* tuple = dict_find(&s_dict, 2502829527);
-	return tuple ? tuple->value->int32 == 1 : 1;
+	return tuple ? atoi(tuple->value->cstring) : 1;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'vibrate_on_bt_disconnect'
+VIBRATE_ON_BT_DISCONNECTValue enamel_get_vibrate_on_bt_disconnect(){
+	Tuple* tuple = dict_find(&s_dict, 542523049);
+	return tuple ? atoi(tuple->value->cstring) : 3;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'vibrate_on_bt_reconnect'
+VIBRATE_ON_BT_RECONNECTValue enamel_get_vibrate_on_bt_reconnect(){
+	Tuple* tuple = dict_find(&s_dict, 2808401293);
+	return tuple ? atoi(tuple->value->cstring) : 3;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'hourly_vibration'
+HOURLY_VIBRATIONValue enamel_get_hourly_vibration(){
+	Tuple* tuple = dict_find(&s_dict, 1181685256);
+	return tuple ? atoi(tuple->value->cstring) : 0;
 }
 // -----------------------------------------------------
 
@@ -122,6 +154,10 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
+		+ 7 + 2
+		+ 7 + 2
+		+ 7 + 2
+		+ 7 + 2
 ;
 }
 
@@ -131,11 +167,15 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_text_outline_top) return 2679461552;
 	if( key == MESSAGE_KEY_color_the_cut_outline_top) return 1805845070;
 	if( key == MESSAGE_KEY_color_the_cut) return 1009183225;
+	if( key == MESSAGE_KEY_color_the_cut_disconnected) return 1436604224;
 	if( key == MESSAGE_KEY_color_the_cut_outline_bottom) return 1636910343;
 	if( key == MESSAGE_KEY_color_background_bottom) return 427728357;
 	if( key == MESSAGE_KEY_color_text_bottom) return 1975043952;
 	if( key == MESSAGE_KEY_color_text_outline_bottom) return 3680561045;
 	if( key == MESSAGE_KEY_animations) return 2502829527;
+	if( key == MESSAGE_KEY_vibrate_on_bt_disconnect) return 542523049;
+	if( key == MESSAGE_KEY_vibrate_on_bt_reconnect) return 2808401293;
+	if( key == MESSAGE_KEY_hourly_vibration) return 1181685256;
 	return 0;
 }
 

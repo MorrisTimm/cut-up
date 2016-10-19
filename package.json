@@ -22,7 +22,11 @@
             "color_the_cut",
             "color_the_cut_outline_top",
             "color_the_cut_outline_bottom",
-            "animations"
+            "animations",
+            "vibrate_on_bt_disconnect",
+            "vibrate_on_bt_reconnect",
+            "color_the_cut_disconnected",
+            "hourly_vibration"
         ],
         "projectType": "native",
         "resources": {

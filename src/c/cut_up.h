@@ -11,6 +11,7 @@ typedef struct {
   GColor color_the_cut;
   GColor color_the_cut_outline_top;
   GColor color_the_cut_outline_bottom;
+  GColor color_the_cut_disconnected;
   uint8_t animations;
 } Settings;
 
