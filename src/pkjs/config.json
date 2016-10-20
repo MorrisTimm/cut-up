@@ -37,19 +37,13 @@
       "allowGray": true
     },
     {
-      "type": "toggle",
-      "messageKey": "show_leading_zeroes_top",
-      "label": "Show leading zeroes",
-      "defaultValue": true
-    },
-    {
       "type": "slider",
       "messageKey": "offset_y_text_top",
       "defaultValue": "0",
       "label": "Text offset",
-      "description": "You can move the text up a bit.",
+      "description": "You can move the text up(+) and down(-) a bit.",
       "min": -20,
-      "max": 0,
+      "max": 20,
       "step": 1
     }
   ]
@@ -127,18 +121,12 @@
       "allowGray": true
     },
     {
-      "type": "toggle",
-      "messageKey": "show_leading_zeroes_bottom",
-      "label": "Show leading zeroes",
-      "defaultValue": true
-    },
-    {
       "type": "slider",
       "messageKey": "offset_y_text_bottom",
       "defaultValue": "0",
       "label": "Text offset",
-      "description": "You can move the text down a bit.",
-      "min": 0,
+      "description": "You can move the text up(+) and down(-) a bit.",
+      "min": -20,
       "max": 20,
       "step": 1
     }
@@ -167,6 +155,26 @@
         },
         {
           "label": "Startup only",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "messageKey": "show_leading_zeroes",
+      "defaultValue": "0",
+      "label": "Leading zeroes",
+      "options": [
+        {
+          "label": "Show",
+          "value": 0
+        },
+        {
+          "label": "Hide for hours",
+          "value": 1
+        },
+        {
+          "label": "Hide",
           "value": 2
         }
       ]
@@ -238,7 +246,7 @@
     {
       "type": "select",
       "messageKey": "hourly_vibration",
-      "defaultValue": 0,
+      "defaultValue": "0",
       "label": "Hourly vibration",
       "options": [
         {

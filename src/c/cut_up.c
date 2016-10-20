@@ -150,30 +150,30 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
      !gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-33, bounds.size.h/2+40+settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-33, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42+settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 11, bounds.size.h/2+40+settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 11, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42+settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_top, settings.color_text_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-33, bounds.size.h/2+40+settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-33, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42+settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 11, bounds.size.h/2+40+settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 11, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42+settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
@@ -224,30 +224,30 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
      !gcolor_equal(settings.color_the_cut_outline_bottom, settings.color_background_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12+settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, 10, bounds.size.h/2-bounds.size.h/14+settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, 10, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-12, bounds.size.h/2-12+settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-12, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14+settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_bottom, settings.color_text_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12+settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-bounds.size.h/14+settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-12, bounds.size.h/2-12+settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-12, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14+settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
@@ -342,7 +342,7 @@ static void animation_stopped(Animation *animation, bool finished, void *context
 static void animate(bool top, bool in, bool follow_up) {
   PropertyAnimation* animation;
   animation = property_animation_create_bounds_origin(top ? top_layer : bottom_layer, NULL, in ? &animation_points[0] : top ? &animation_points[1] : &animation_points[2] );
-  animation_set_duration((Animation*)animation, 2*PBL_DISPLAY_WIDTH);
+  animation_set_duration((Animation*)animation, 1000+2*PBL_DISPLAY_WIDTH);
   animation_set_curve((Animation*)animation, (!in || top) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
   animation_properties[top ? 0 : 1].out = !in;
   animation_properties[top ? 0 : 1].follow_up = follow_up;
@@ -396,7 +396,7 @@ static void my_window_load(Window *window) {
   cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-10);
 
   // this is fine tuned to save RAM, it only needs to cover the overlapping area
-  copy_window_start = cut[1].y-17;
+  copy_window_start = cut[1].y-root_bounds.size.h*10/42;
   copy_window_height = cut[0].y-copy_window_start;
 
   // create the cutting path

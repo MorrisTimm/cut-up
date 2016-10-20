@@ -30,38 +30,49 @@ static void load_settings() {
   bluetooth_settings.vibrate_on_reconnect = enamel_get_vibrate_on_bt_reconnect();
   
   hourly_vibration = enamel_get_hourly_vibration();
-  show_leading_zeroes_top = enamel_get_show_leading_zeroes_top();
-  show_leading_zeroes_bottom = enamel_get_show_leading_zeroes_bottom();
+  uint8_t show_leading_zeroes = enamel_get_show_leading_zeroes();
+  show_leading_zeroes_top = SHOW_LEADING_ZEROES_SHOW == show_leading_zeroes;
+  show_leading_zeroes_bottom = SHOW_LEADING_ZEROES_SHOW == show_leading_zeroes || SHOW_LEADING_ZEROES_HIDE_FOR_HOURS == show_leading_zeroes;
 }
 
 static void enamel_settings_received_handler(void *context) {
+  bool old_show_leading_zeroes_top = show_leading_zeroes_top;
+  bool old_show_leading_zeroes_bottom = show_leading_zeroes_bottom;
+
+  load_settings();
+
+  // check for leading zeroes changes and trigger an animation to make the change
   bool update_hours = false;
   bool update_minutes = false;
-  if(enamel_get_show_leading_zeroes_top() != show_leading_zeroes_top &&
+
+  if(old_show_leading_zeroes_top != show_leading_zeroes_top &&
      (' ' == update_text[CUT_UP_TOP][0] || '0' == update_text[CUT_UP_TOP][0])) {
-    // this is still the old value, so we have to use it reversed
     if(show_leading_zeroes_top) {
-      update_text[CUT_UP_TOP][0] = ' ';
-    } else {
       update_text[CUT_UP_TOP][0] = '0';
+    } else {
+      update_text[CUT_UP_TOP][0] = ' ';
     }
     update_hours = true;
   }
-  if(enamel_get_show_leading_zeroes_bottom() != show_leading_zeroes_bottom &&
+  
+  if(old_show_leading_zeroes_top != show_leading_zeroes_bottom &&
      (' ' == update_text[CUT_UP_BOTTOM][0] || '0' == update_text[CUT_UP_BOTTOM][0])) {
-    // this is still the old value, so we have to use it reversed
     if(show_leading_zeroes_bottom) {
-      update_text[CUT_UP_BOTTOM][0] = ' ';
-    } else {
       update_text[CUT_UP_BOTTOM][0] = '0';
+    } else {
+      update_text[CUT_UP_BOTTOM][0] = ' ';
     }
     update_minutes = true;
   }
-  load_settings();
+  
   cut_up_update(update_hours, update_minutes);
 }
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
+#if 0 // for testing animations
+  tick_time->tm_hour = 0;
+  tick_time->tm_min = 0;
+#endif
   strftime(update_text[CUT_UP_TOP], 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
   strftime(update_text[CUT_UP_BOTTOM], 3, "%M", tick_time);
   if(!show_leading_zeroes_top && tick_time->tm_hour < 10) {
