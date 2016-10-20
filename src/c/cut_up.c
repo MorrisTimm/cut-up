@@ -342,7 +342,7 @@ static void animation_stopped(Animation *animation, bool finished, void *context
 static void animate(bool top, bool in, bool follow_up) {
   PropertyAnimation* animation;
   animation = property_animation_create_bounds_origin(top ? top_layer : bottom_layer, NULL, in ? &animation_points[0] : top ? &animation_points[1] : &animation_points[2] );
-  animation_set_duration((Animation*)animation, 1000+2*PBL_DISPLAY_WIDTH);
+  animation_set_duration((Animation*)animation, 2*PBL_DISPLAY_WIDTH);
   animation_set_curve((Animation*)animation, (!in || top) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
   animation_properties[top ? 0 : 1].out = !in;
   animation_properties[top ? 0 : 1].follow_up = follow_up;
