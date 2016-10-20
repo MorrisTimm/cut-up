@@ -40,7 +40,17 @@
       "type": "toggle",
       "messageKey": "show_leading_zeroes_top",
       "label": "Show leading zeroes",
-      "defaultValue": false
+      "defaultValue": true
+    },
+    {
+      "type": "slider",
+      "messageKey": "offset_y_text_top",
+      "defaultValue": "0",
+      "label": "Text offset",
+      "description": "You can move the text up a bit.",
+      "min": -20,
+      "max": 0,
+      "step": 1
     }
   ]
 },
@@ -121,6 +131,16 @@
       "messageKey": "show_leading_zeroes_bottom",
       "label": "Show leading zeroes",
       "defaultValue": true
+    },
+    {
+      "type": "slider",
+      "messageKey": "offset_y_text_bottom",
+      "defaultValue": "0",
+      "label": "Text offset",
+      "description": "You can move the text down a bit.",
+      "min": 0,
+      "max": 20,
+      "step": 1
     }
   ]
 },

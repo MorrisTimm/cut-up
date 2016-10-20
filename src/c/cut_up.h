@@ -18,6 +18,8 @@ typedef struct {
   GColor color_the_cut_outline_bottom;
   GColor color_the_cut_disconnected;
   uint8_t animations;
+  int8_t offset_y_text_top;
+  int8_t offset_y_text_bottom;
 } Settings;
 
 void cut_up_update(bool hours, bool minutes);

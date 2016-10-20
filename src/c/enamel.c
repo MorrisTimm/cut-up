@@ -57,7 +57,16 @@ GColor enamel_get_color_text_outline_top(){
 // Getter for 'show_leading_zeroes_top'
 bool enamel_get_show_leading_zeroes_top(){
 	Tuple* tuple = dict_find(&s_dict, 100207658);
-	return tuple ? tuple->value->int32 == 1 : false;
+	return tuple ? tuple->value->int32 == 1 : true;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'offset_y_text_top'
+int32_t enamel_get_offset_y_text_top(){
+	Tuple* tuple = dict_find(&s_dict, 711660296);
+		
+	return tuple ? tuple->value->int32 : 0;
 }
 // -----------------------------------------------------
 
@@ -126,6 +135,15 @@ bool enamel_get_show_leading_zeroes_bottom(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'offset_y_text_bottom'
+int32_t enamel_get_offset_y_text_bottom(){
+	Tuple* tuple = dict_find(&s_dict, 1299163365);
+		
+	return tuple ? tuple->value->int32 : 0;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'animations'
 ANIMATIONSValue enamel_get_animations(){
 	Tuple* tuple = dict_find(&s_dict, 2502829527);
@@ -172,6 +190,8 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
+		+ 7 + 4
+		+ 7 + 4
 		+ 7 + 2
 		+ 7 + 2
 		+ 7 + 2
@@ -184,6 +204,7 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_text_top) return 3825572583;
 	if( key == MESSAGE_KEY_color_text_outline_top) return 2679461552;
 	if( key == MESSAGE_KEY_show_leading_zeroes_top) return 100207658;
+	if( key == MESSAGE_KEY_offset_y_text_top) return 711660296;
 	if( key == MESSAGE_KEY_color_the_cut_outline_top) return 1805845070;
 	if( key == MESSAGE_KEY_color_the_cut) return 1009183225;
 	if( key == MESSAGE_KEY_color_the_cut_disconnected) return 1436604224;
@@ -192,6 +213,7 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_text_bottom) return 1975043952;
 	if( key == MESSAGE_KEY_color_text_outline_bottom) return 3680561045;
 	if( key == MESSAGE_KEY_show_leading_zeroes_bottom) return 3565378127;
+	if( key == MESSAGE_KEY_offset_y_text_bottom) return 1299163365;
 	if( key == MESSAGE_KEY_animations) return 2502829527;
 	if( key == MESSAGE_KEY_vibrate_on_bt_disconnect) return 542523049;
 	if( key == MESSAGE_KEY_vibrate_on_bt_reconnect) return 2808401293;
