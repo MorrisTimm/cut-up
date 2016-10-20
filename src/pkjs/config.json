@@ -35,6 +35,12 @@
       "label": "Text border color",
       "sunlight": false,
       "allowGray": true
+    },
+    {
+      "type": "toggle",
+      "messageKey": "show_leading_zeroes_top",
+      "label": "Show leading zeroes",
+      "defaultValue": false
     }
   ]
 },
@@ -109,6 +115,12 @@
       "label": "Text border color",
       "sunlight": false,
       "allowGray": true
+    },
+    {
+      "type": "toggle",
+      "messageKey": "show_leading_zeroes_bottom",
+      "label": "Show leading zeroes",
+      "defaultValue": true
     }
   ]
 },

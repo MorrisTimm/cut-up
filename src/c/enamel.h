@@ -23,6 +23,11 @@ GColor enamel_get_color_text_outline_top();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'show_leading_zeroes_top'
+bool enamel_get_show_leading_zeroes_top();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_the_cut_outline_top'
 GColor enamel_get_color_the_cut_outline_top();
 // -----------------------------------------------------
@@ -55,6 +60,11 @@ GColor enamel_get_color_text_bottom();
 // -----------------------------------------------------
 // Getter for 'color_text_outline_bottom'
 GColor enamel_get_color_text_outline_bottom();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'show_leading_zeroes_bottom'
+bool enamel_get_show_leading_zeroes_bottom();
 // -----------------------------------------------------
 
 // -----------------------------------------------------

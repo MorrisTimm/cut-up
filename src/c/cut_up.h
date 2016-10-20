@@ -1,6 +1,11 @@
 #pragma once
 #include <pebble.h>
 
+enum {
+  CUT_UP_TOP,
+  CUT_UP_BOTTOM
+};
+
 typedef struct {
   GColor color_background_top;
   GColor color_background_bottom;

@@ -8,6 +8,8 @@ extern Settings settings;
 extern char update_text[2][3];
 extern BluetoothSettings bluetooth_settings;
 static uint8_t hourly_vibration;
+static bool show_leading_zeroes_top;
+static bool show_leading_zeroes_bottom;
 
 static void load_settings() {
   settings.color_background_top = enamel_get_color_background_top();
@@ -26,20 +28,50 @@ static void load_settings() {
   bluetooth_settings.vibrate_on_reconnect = enamel_get_vibrate_on_bt_reconnect();
   
   hourly_vibration = enamel_get_hourly_vibration();
+  show_leading_zeroes_top = enamel_get_show_leading_zeroes_top();
+  show_leading_zeroes_bottom = enamel_get_show_leading_zeroes_bottom();
 }
 
-static void enamel_settings_received_handler(void *context){
+static void enamel_settings_received_handler(void *context) {
+  bool update_hours = false;
+  bool update_minutes = false;
+  if(enamel_get_show_leading_zeroes_top() != show_leading_zeroes_top &&
+     (' ' == update_text[CUT_UP_TOP][0] || '0' == update_text[CUT_UP_TOP][0])) {
+    // this is still the old value, so we have to use it reversed
+    if(show_leading_zeroes_top) {
+      update_text[CUT_UP_TOP][0] = ' ';
+    } else {
+      update_text[CUT_UP_TOP][0] = '0';
+    }
+    update_hours = true;
+  }
+  if(enamel_get_show_leading_zeroes_bottom() != show_leading_zeroes_bottom &&
+     (' ' == update_text[CUT_UP_BOTTOM][0] || '0' == update_text[CUT_UP_BOTTOM][0])) {
+    // this is still the old value, so we have to use it reversed
+    if(show_leading_zeroes_bottom) {
+      update_text[CUT_UP_BOTTOM][0] = ' ';
+    } else {
+      update_text[CUT_UP_BOTTOM][0] = '0';
+    }
+    update_minutes = true;
+  }
   load_settings();
-  cut_up_update(false, false);
+  cut_up_update(update_hours, update_minutes);
 }
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
-  strftime(update_text[0], 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
-  strftime(update_text[1], 3, "%M", tick_time);
-#if 1 // for testing animations
-  cut_up_update(units_changed & HOUR_UNIT, units_changed & MINUTE_UNIT);
-#else
+  strftime(update_text[CUT_UP_TOP], 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
+  strftime(update_text[CUT_UP_BOTTOM], 3, "%M", tick_time);
+  if(!show_leading_zeroes_top && tick_time->tm_hour < 10) {
+    update_text[CUT_UP_TOP][0] = ' ';
+  }
+  if(!show_leading_zeroes_bottom && tick_time->tm_min < 10) {
+    update_text[CUT_UP_BOTTOM][0] = ' ';
+  }
+#if 0 // for testing animations
   cut_up_update(units_changed & MINUTE_UNIT, units_changed & SECOND_UNIT && 0 == (tick_time->tm_sec % 10));
+#else
+  cut_up_update(units_changed & HOUR_UNIT, units_changed & MINUTE_UNIT);
 #endif
   if(hourly_vibration && 0 == tick_time->tm_min && units_changed & MINUTE_UNIT) {
     bluetooth_vibrate(hourly_vibration);
@@ -50,10 +82,10 @@ void start() {
   time_t now = time(NULL);
   struct tm* tick_time = localtime(&now);
   tick_handler(tick_time, 0);
-#if 1 // for testing animations
-  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
-#else
+#if 0 // for testing animations
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+#else
+  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 #endif
 }
 

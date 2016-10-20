@@ -1,69 +1,71 @@
 {
-  "author": "Morris",
-  "dependencies": {
-    "enamel": "^1.2.4",
-    "pebble-fctx": "^1.6.1"
-  },
-  "keywords": [],
-  "name": "cut-up",
-  "pebble": {
-    "capabilities": [
-      "configurable"
-    ],
-    "displayName": "Cut/up",
-    "enableMultiJS": true,
-    "messageKeys": [
-      "color_background_top",
-      "color_background_bottom",
-      "color_text_top",
-      "color_text_bottom",
-      "color_text_outline_top",
-      "color_text_outline_bottom",
-      "color_the_cut",
-      "color_the_cut_outline_top",
-      "color_the_cut_outline_bottom",
-      "animations",
-      "vibrate_on_bt_disconnect",
-      "vibrate_on_bt_reconnect",
-      "color_the_cut_disconnected",
-      "hourly_vibration"
-    ],
-    "projectType": "native",
-    "resources": {
-      "media": [
-        {
-          "file": "images/cutup_menu_icon.png",
-          "menuIcon": true,
-          "name": "CUTUP_MENU_ICON",
-          "targetPlatforms": null,
-          "type": "bitmap"
-        },
-        {
-          "file": "data/PeaceSans_outline.ffont",
-          "name": "FONT_PEACE_SANS_OUTLINE",
-          "targetPlatforms": null,
-          "type": "raw"
-        },
-        {
-          "file": "data/PeaceSans.ffont",
-          "name": "FONT_PEACE_SANS",
-          "targetPlatforms": null,
-          "type": "raw"
-        }
-      ]
+    "author": "Morris",
+    "dependencies": {
+        "enamel": "^1.2.3",
+        "pebble-fctx": "^1.6.0"
     },
-    "sdkVersion": "3",
-    "targetPlatforms": [
-      "aplite",
-      "basalt",
-      "chalk",
-      "diorite",
-      "emery"
-    ],
-    "uuid": "10bf9efe-d8ea-43a2-aab3-34ed2ecd8287",
-    "watchapp": {
-      "watchface": true
-    }
-  },
-  "version": "1.0.0"
+    "keywords": [],
+    "name": "cut-up",
+    "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
+        "displayName": "Cut/up",
+        "enableMultiJS": true,
+        "messageKeys": [
+            "color_background_top",
+            "color_background_bottom",
+            "color_text_top",
+            "color_text_bottom",
+            "color_text_outline_top",
+            "color_text_outline_bottom",
+            "color_the_cut",
+            "color_the_cut_outline_top",
+            "color_the_cut_outline_bottom",
+            "animations",
+            "vibrate_on_bt_disconnect",
+            "vibrate_on_bt_reconnect",
+            "color_the_cut_disconnected",
+            "hourly_vibration",
+            "show_leading_zeroes_top",
+            "show_leading_zeroes_bottom"
+        ],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/cutup_menu_icon.png",
+                    "menuIcon": true,
+                    "name": "CUTUP_MENU_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "data/PeaceSans_outline.ffont",
+                    "name": "FONT_PEACE_SANS_OUTLINE",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/PeaceSans.ffont",
+                    "name": "FONT_PEACE_SANS",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "emery"
+        ],
+        "uuid": "10bf9efe-d8ea-43a2-aab3-34ed2ecd8287",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
 }

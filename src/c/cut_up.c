@@ -5,26 +5,6 @@
 #include "bluetooth.h"
 #include "enamel.h"
 
-// fix for SDK 4.1.4
-#ifndef PBL_DISPLAY_WIDTH
-#if defined(PBL_PLATFORM_EMERY)
-#define PBL_DISPLAY_WIDTH 200
-#elif defined(PBL_PLATFORM_CHALK)
-#define PBL_DISPLAY_WIDTH 180
-#else
-#define PBL_DISPLAY_WIDTH 144
-#endif
-#endif
-#ifndef PBL_DISPLAY_HEIGHT
-#if defined(PBL_PLATFORM_EMERY)
-#define PBL_DISPLAY_HEIGHT 228
-#elif defined(PBL_PLATFORM_CHALK)
-#define PBL_DISPLAY_HEIGHT 180
-#else
-#define PBL_DISPLAY_HEIGHT 168
-#endif
-#endif
-
 extern void start();
 
 #define bw_bitmap_data_get_value(BMP, BPR, X, Y) (((*((BMP)+(Y)*(BPR)+(X)/8)) & (1 << (X)%8)) ? 1 : 0)
@@ -122,7 +102,7 @@ static void draw_text_with_fctx(GContext* ctx, GPoint origin, char* text, uint8_
   fctx_set_text_em_height(&fctx, font_peace_sans[font], PBL_DISPLAY_WIDTH > 180 ? 140 : 105);
   fctx_set_fill_color(&fctx, color);
   fctx_set_pivot(&fctx, FPointZero);
-  fctx_set_offset(&fctx, FPointI(x+origin.x, y+origin.y+unobstructed_offset));
+  fctx_set_offset(&fctx, FPointI(x+origin.x+((GTextAlignmentLeft == text_alignment ? 1 : -1)*(' ' == text[0] ? PBL_DISPLAY_WIDTH/4 : 0)), y+origin.y+unobstructed_offset));
   fctx_set_rotation(&fctx, 0);
   fctx_draw_string(&fctx, text, font_peace_sans[font], text_alignment, text_anchor);
   fctx_end_fill(&fctx);
