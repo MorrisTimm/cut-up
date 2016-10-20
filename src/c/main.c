@@ -25,10 +25,10 @@ static void load_settings() {
   settings.animations = enamel_get_animations();
   settings.offset_y_text_top = enamel_get_offset_y_text_top();
   settings.offset_y_text_bottom = enamel_get_offset_y_text_bottom();
-  
+
   bluetooth_settings.vibrate_on_disconnect = enamel_get_vibrate_on_bt_disconnect();
   bluetooth_settings.vibrate_on_reconnect = enamel_get_vibrate_on_bt_reconnect();
-  
+
   hourly_vibration = enamel_get_hourly_vibration();
   uint8_t show_leading_zeroes = enamel_get_show_leading_zeroes();
   show_leading_zeroes_top = SHOW_LEADING_ZEROES_SHOW == show_leading_zeroes;
@@ -54,8 +54,8 @@ static void enamel_settings_received_handler(void *context) {
     }
     update_hours = true;
   }
-  
-  if(old_show_leading_zeroes_top != show_leading_zeroes_bottom &&
+
+  if(old_show_leading_zeroes_bottom != show_leading_zeroes_bottom &&
      (' ' == update_text[CUT_UP_BOTTOM][0] || '0' == update_text[CUT_UP_BOTTOM][0])) {
     if(show_leading_zeroes_bottom) {
       update_text[CUT_UP_BOTTOM][0] = '0';
@@ -64,7 +64,7 @@ static void enamel_settings_received_handler(void *context) {
     }
     update_minutes = true;
   }
-  
+
   cut_up_update(update_hours, update_minutes);
 }
 
