@@ -70,6 +70,7 @@ static void enamel_settings_received_handler(void *context) {
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
 #if 0 // for testing animations
+  light_enable(true);
   tick_time->tm_hour = 0;
   tick_time->tm_min = 0;
 #endif

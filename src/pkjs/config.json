@@ -44,7 +44,8 @@
       "description": "You can move the text up(+) and down(-) a bit.",
       "min": -20,
       "max": 20,
-      "step": 1
+      "step": 1,
+      "capabilities": ["NOT_PLATFORM_APLITE"]
     }
   ]
 },
@@ -128,7 +129,8 @@
       "description": "You can move the text up(+) and down(-) a bit.",
       "min": -20,
       "max": 20,
-      "step": 1
+      "step": 1,
+      "capabilities": ["NOT_PLATFORM_APLITE"]
     }
   ]
 },

@@ -396,7 +396,11 @@ static void my_window_load(Window *window) {
   cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-10);
 
   // this is fine tuned to save RAM, it only needs to cover the overlapping area
+#ifdef PBL_PLATFORM_APLITE
+  copy_window_start = cut[1].y-20; // for Aplite the text positioning is disabled to save RAM
+#else
   copy_window_start = cut[1].y-root_bounds.size.h*10/42;
+#endif
   copy_window_height = cut[0].y-copy_window_start;
 
   // create the cutting path
