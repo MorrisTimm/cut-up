@@ -23,8 +23,13 @@ static void load_settings() {
   settings.color_the_cut_outline_top = enamel_get_color_the_cut_outline_top();
   settings.color_the_cut_outline_bottom = enamel_get_color_the_cut_outline_bottom();
   settings.animations = enamel_get_animations();
+#ifndef PBL_PLATFORM_APLITE // there is no text positioning on Aplite to save RAM
   settings.offset_y_text_top = enamel_get_offset_y_text_top();
   settings.offset_y_text_bottom = enamel_get_offset_y_text_bottom();
+#else
+  settings.offset_y_text_top = 0;
+  settings.offset_y_text_bottom = 0;
+#endif
 
   bluetooth_settings.vibrate_on_disconnect = enamel_get_vibrate_on_bt_disconnect();
   bluetooth_settings.vibrate_on_reconnect = enamel_get_vibrate_on_bt_reconnect();

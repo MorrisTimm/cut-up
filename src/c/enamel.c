@@ -53,6 +53,7 @@ GColor enamel_get_color_text_outline_top(){
 }
 // -----------------------------------------------------
 
+#if !defined(PBL_PLATFORM_APLITE)
 // -----------------------------------------------------
 // Getter for 'offset_y_text_top'
 int32_t enamel_get_offset_y_text_top(){
@@ -61,6 +62,7 @@ int32_t enamel_get_offset_y_text_top(){
 	return tuple ? tuple->value->int32 : 0;
 }
 // -----------------------------------------------------
+#endif
 
 // -----------------------------------------------------
 // Getter for 'color_the_cut_outline_top'
@@ -118,6 +120,7 @@ GColor enamel_get_color_text_outline_bottom(){
 }
 // -----------------------------------------------------
 
+#if !defined(PBL_PLATFORM_APLITE)
 // -----------------------------------------------------
 // Getter for 'offset_y_text_bottom'
 int32_t enamel_get_offset_y_text_bottom(){
@@ -126,6 +129,7 @@ int32_t enamel_get_offset_y_text_bottom(){
 	return tuple ? tuple->value->int32 : 0;
 }
 // -----------------------------------------------------
+#endif
 
 // -----------------------------------------------------
 // Getter for 'animations'
@@ -173,6 +177,9 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
+#if !defined(PBL_PLATFORM_APLITE)
+		+ 7 + 4
+#endif
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
@@ -180,8 +187,9 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
+#if !defined(PBL_PLATFORM_APLITE)
 		+ 7 + 4
-		+ 7 + 4
+#endif
 		+ 7 + 2
 		+ 7 + 2
 		+ 7 + 2
@@ -194,7 +202,9 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_background_top) return 3282856444;
 	if( key == MESSAGE_KEY_color_text_top) return 3825572583;
 	if( key == MESSAGE_KEY_color_text_outline_top) return 2679461552;
+#if !defined(PBL_PLATFORM_APLITE)
 	if( key == MESSAGE_KEY_offset_y_text_top) return 711660296;
+#endif
 	if( key == MESSAGE_KEY_color_the_cut_outline_top) return 1805845070;
 	if( key == MESSAGE_KEY_color_the_cut) return 1009183225;
 	if( key == MESSAGE_KEY_color_the_cut_disconnected) return 1436604224;
@@ -202,7 +212,9 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_background_bottom) return 427728357;
 	if( key == MESSAGE_KEY_color_text_bottom) return 1975043952;
 	if( key == MESSAGE_KEY_color_text_outline_bottom) return 3680561045;
+#if !defined(PBL_PLATFORM_APLITE)
 	if( key == MESSAGE_KEY_offset_y_text_bottom) return 1299163365;
+#endif
 	if( key == MESSAGE_KEY_animations) return 2502829527;
 	if( key == MESSAGE_KEY_show_leading_zeroes) return 1614853234;
 	if( key == MESSAGE_KEY_vibrate_on_bt_disconnect) return 542523049;

@@ -22,10 +22,12 @@ GColor enamel_get_color_text_top();
 GColor enamel_get_color_text_outline_top();
 // -----------------------------------------------------
 
+#if !defined(PBL_PLATFORM_APLITE)
 // -----------------------------------------------------
 // Getter for 'offset_y_text_top'
 #define OFFSET_Y_TEXT_TOP_PRECISION 1
 int32_t enamel_get_offset_y_text_top();
+#endif
 // -----------------------------------------------------
 
 // -----------------------------------------------------
@@ -63,10 +65,12 @@ GColor enamel_get_color_text_bottom();
 GColor enamel_get_color_text_outline_bottom();
 // -----------------------------------------------------
 
+#if !defined(PBL_PLATFORM_APLITE)
 // -----------------------------------------------------
 // Getter for 'offset_y_text_bottom'
 #define OFFSET_Y_TEXT_BOTTOM_PRECISION 1
 int32_t enamel_get_offset_y_text_bottom();
+#endif
 // -----------------------------------------------------
 
 // -----------------------------------------------------
