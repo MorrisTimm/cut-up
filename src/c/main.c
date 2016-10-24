@@ -58,15 +58,65 @@ static void handle_leading_zeroes() {
   }
 }
 
-static void enamel_settings_received_handler(void *context) {
-  load_settings();
+static void set_value(char* text, uint8_t value, struct tm* tick_time) {
+  switch(value) {
+    case VALUE_TOP_DAY_OF_THE_MONTH: {
+      strftime(text, 3, "%d", tick_time);
+      break;
+    }
+    case VALUE_TOP_MONTH: {
+      strftime(text, 3, "%m", tick_time);
+      break;
+    }
+    case VALUE_TOP_YEAR: {
+      strftime(text, 3, "%g", tick_time);
+      break;
+    }
+    case VALUE_TOP_BATTERY_LEVEL: {
+      BatteryChargeState battery_state =  battery_state_service_peek();
+      uint8_t battery_level = battery_state.charge_percent;
+      if(battery_level > 99) {
+        battery_level = 99;
+      }
+      snprintf(text, 3, "%02d", battery_level);
+      break;
+    }
+    case VALUE_TOP_CALENDAR_WEEK__ISO_8601_: {
+      strftime(text, 3, "%V", tick_time);
+      break;
+    }
+    case VALUE_TOP_CALENDAR_WEEK__US_: {
+      strftime(text, 3, "%U", tick_time);
+      break;
+    }
+    case VALUE_TOP_DAY_OF_THE_WEEK: {
+      if(enamel_get_first_day_of_the_week()) {
+        snprintf(text, 3, "%02d", tick_time->tm_wday+1);
+      } else {
+        strftime(text, 3, "0%u", tick_time);
+      }
+      break;
+    }
+  }
+}
 
+static void startup_handler(void* data) {
   // store current value for comparison
   memcpy(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2);
   memcpy(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2);
 
+  time_t now = time(NULL);
+  struct tm* tick_time = localtime(&now);
+  set_value(update_text[CUT_UP_TOP], enamel_get_value_top(), tick_time);
+  set_value(update_text[CUT_UP_BOTTOM], enamel_get_value_bottom(), tick_time);
+
   handle_leading_zeroes();
   cut_up_update(memcmp(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2), memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), true);
+}
+
+static void enamel_settings_received_handler(void* context) {
+  load_settings();
+  startup_handler(context);
 }
 
 static void timer_exit(void* data) {
@@ -81,7 +131,7 @@ static void exit_app() {
   }
   if(ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations) {
     cut_up_update(true, true, false);
-    app_timer_register(2*PBL_DISPLAY_WIDTH, timer_exit, NULL);
+    app_timer_register(2*PBL_DISPLAY_WIDTH+PBL_DISPLAY_WIDTH/3, timer_exit, NULL);
   } else {
     window_stack_pop_all(false);
   }
@@ -89,20 +139,6 @@ static void exit_app() {
 
 static void timer_handler(void* data) {
   exit_app();
-}
-
-static void startup_handler(void* data) {
-  // store current value for comparison
-  memcpy(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2);
-  memcpy(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2);
-
-  time_t now = time(NULL);
-  struct tm* tick_time = localtime(&now);
-  strftime(update_text[CUT_UP_TOP], 3, "%d", tick_time);
-  strftime(update_text[CUT_UP_BOTTOM], 3, "%m", tick_time);
-
-  handle_leading_zeroes();
-  cut_up_update(memcmp(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2), memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), true);
 }
 
 void start() {
