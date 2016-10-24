@@ -30,6 +30,14 @@ static uint32_t s_dict_size = 0;
 static bool s_config_changed;
 
 // -----------------------------------------------------
+// Getter for 'value_top'
+VALUE_TOPValue enamel_get_value_top(){
+	Tuple* tuple = dict_find(&s_dict, 1302333654);
+	return tuple ? atoi(tuple->value->cstring) : 0;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_background_top'
 GColor enamel_get_color_background_top(){
 	Tuple* tuple = dict_find(&s_dict, 3282856444);
@@ -97,6 +105,14 @@ GColor enamel_get_color_the_cut_outline_bottom(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'value_bottom'
+VALUE_BOTTOMValue enamel_get_value_bottom(){
+	Tuple* tuple = dict_find(&s_dict, 4275626655);
+	return tuple ? atoi(tuple->value->cstring) : 1;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_background_bottom'
 GColor enamel_get_color_background_bottom(){
 	Tuple* tuple = dict_find(&s_dict, 427728357);
@@ -148,25 +164,33 @@ SHOW_LEADING_ZEROESValue enamel_get_show_leading_zeroes(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-// Getter for 'vibrate_on_bt_disconnect'
-VIBRATE_ON_BT_DISCONNECTValue enamel_get_vibrate_on_bt_disconnect(){
-	Tuple* tuple = dict_find(&s_dict, 542523049);
-	return tuple ? atoi(tuple->value->cstring) : 3;
+// Getter for 'quick_launch_timeout'
+int32_t enamel_get_quick_launch_timeout(){
+	Tuple* tuple = dict_find(&s_dict, 3053448009);
+	return tuple ? tuple->value->int32 : 20;
 }
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-// Getter for 'vibrate_on_bt_reconnect'
-VIBRATE_ON_BT_RECONNECTValue enamel_get_vibrate_on_bt_reconnect(){
-	Tuple* tuple = dict_find(&s_dict, 2808401293);
-	return tuple ? atoi(tuple->value->cstring) : 3;
+// Getter for 'show_time_on_start'
+bool enamel_get_show_time_on_start(){
+	Tuple* tuple = dict_find(&s_dict, 2230560336);
+	return tuple ? tuple->value->int32 == 1 : true;
 }
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-// Getter for 'hourly_vibration'
-HOURLY_VIBRATIONValue enamel_get_hourly_vibration(){
-	Tuple* tuple = dict_find(&s_dict, 1181685256);
+// Getter for 'show_leading_zeroes_on_time'
+SHOW_LEADING_ZEROES_ON_TIMEValue enamel_get_show_leading_zeroes_on_time(){
+	Tuple* tuple = dict_find(&s_dict, 1956971886);
+	return tuple ? atoi(tuple->value->cstring) : 0;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'first_day_of_the_week'
+FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week(){
+	Tuple* tuple = dict_find(&s_dict, 1349210911);
 	return tuple ? atoi(tuple->value->cstring) : 0;
 }
 // -----------------------------------------------------
@@ -174,6 +198,7 @@ HOURLY_VIBRATIONValue enamel_get_hourly_vibration(){
 
 static uint16_t prv_get_inbound_size() {
 	return 1
+		+ 7 + 2
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
@@ -184,6 +209,7 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
+		+ 7 + 2
 		+ 7 + 4
 		+ 7 + 4
 		+ 7 + 4
@@ -192,13 +218,15 @@ static uint16_t prv_get_inbound_size() {
 #endif
 		+ 7 + 2
 		+ 7 + 2
-		+ 7 + 2
+		+ 7 + 4
+		+ 7 + 4
 		+ 7 + 2
 		+ 7 + 2
 ;
 }
 
 static uint32_t prv_map_messagekey(const uint32_t key){
+	if( key == MESSAGE_KEY_value_top) return 1302333654;
 	if( key == MESSAGE_KEY_color_background_top) return 3282856444;
 	if( key == MESSAGE_KEY_color_text_top) return 3825572583;
 	if( key == MESSAGE_KEY_color_text_outline_top) return 2679461552;
@@ -209,6 +237,7 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_the_cut) return 1009183225;
 	if( key == MESSAGE_KEY_color_the_cut_disconnected) return 1436604224;
 	if( key == MESSAGE_KEY_color_the_cut_outline_bottom) return 1636910343;
+	if( key == MESSAGE_KEY_value_bottom) return 4275626655;
 	if( key == MESSAGE_KEY_color_background_bottom) return 427728357;
 	if( key == MESSAGE_KEY_color_text_bottom) return 1975043952;
 	if( key == MESSAGE_KEY_color_text_outline_bottom) return 3680561045;
@@ -217,9 +246,10 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 #endif
 	if( key == MESSAGE_KEY_animations) return 2502829527;
 	if( key == MESSAGE_KEY_show_leading_zeroes) return 1614853234;
-	if( key == MESSAGE_KEY_vibrate_on_bt_disconnect) return 542523049;
-	if( key == MESSAGE_KEY_vibrate_on_bt_reconnect) return 2808401293;
-	if( key == MESSAGE_KEY_hourly_vibration) return 1181685256;
+	if( key == MESSAGE_KEY_quick_launch_timeout) return 3053448009;
+	if( key == MESSAGE_KEY_show_time_on_start) return 2230560336;
+	if( key == MESSAGE_KEY_show_leading_zeroes_on_time) return 1956971886;
+	if( key == MESSAGE_KEY_first_day_of_the_week) return 1349210911;
 	return 0;
 }
 
@@ -233,7 +263,7 @@ static bool prv_each_settings_received(void *this, void *context) {
 }
 
 static void prv_inbox_received_handle(DictionaryIterator *iter, void *context) {
-	if(dict_find(iter, MESSAGE_KEY_color_background_top)){
+	if(dict_find(iter, MESSAGE_KEY_value_top)){
 		if(s_dict_buffer){
 			free(s_dict_buffer);
 			s_dict_buffer = NULL;

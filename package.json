@@ -5,12 +5,12 @@
         "pebble-fctx": "^1.6.1"
     },
     "keywords": [],
-    "name": "cut-up",
+    "name": "cut-up-plus",
     "pebble": {
         "capabilities": [
             "configurable"
         ],
-        "displayName": "Cut/up",
+        "displayName": "Cut/up+",
         "enableMultiJS": true,
         "messageKeys": [
             "color_background_top",
@@ -23,13 +23,16 @@
             "color_the_cut_outline_top",
             "color_the_cut_outline_bottom",
             "animations",
-            "vibrate_on_bt_disconnect",
-            "vibrate_on_bt_reconnect",
             "color_the_cut_disconnected",
-            "hourly_vibration",
             "offset_y_text_top",
             "offset_y_text_bottom",
-            "show_leading_zeroes"
+            "show_leading_zeroes",
+            "value_top",
+            "value_bottom",
+            "quick_launch_timeout",
+            "show_time_on_start",
+            "show_leading_zeroes_on_time",
+            "first_day_of_the_week"
         ],
         "projectType": "native",
         "resources": {
@@ -63,10 +66,10 @@
             "diorite",
             "emery"
         ],
-        "uuid": "10bf9efe-d8ea-43a2-aab3-34ed2ecd8287",
+        "uuid": "5942481d-9d39-40a7-9c7a-8f6de05a78bf",
         "watchapp": {
-            "watchface": true
+            "watchface": false
         }
     },
-    "version": "1.1.0"
+    "version": "1.0.0"
 }

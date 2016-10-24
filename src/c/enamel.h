@@ -8,6 +8,20 @@
 #include <pebble.h>
 
 // -----------------------------------------------------
+// Getter for 'value_top'
+typedef enum {
+	VALUE_TOP_DAY_OF_THE_MONTH = 0,
+	VALUE_TOP_MONTH = 1,
+	VALUE_TOP_YEAR = 2,
+	VALUE_TOP_BATTERY_LEVEL = 3,
+	VALUE_TOP_CALENDAR_WEEK__ISO_8601_ = 4,
+	VALUE_TOP_CALENDAR_WEEK__US_ = 5,
+	VALUE_TOP_DAY_OF_THE_WEEK = 6,
+} VALUE_TOPValue;
+VALUE_TOPValue enamel_get_value_top();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_background_top'
 GColor enamel_get_color_background_top();
 // -----------------------------------------------------
@@ -51,6 +65,20 @@ GColor enamel_get_color_the_cut_outline_bottom();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'value_bottom'
+typedef enum {
+	VALUE_BOTTOM_DAY_OF_THE_MONTH = 0,
+	VALUE_BOTTOM_MONTH = 1,
+	VALUE_BOTTOM_YEAR = 2,
+	VALUE_BOTTOM_BATTERY_LEVEL = 3,
+	VALUE_BOTTOM_CALENDAR_WEEK__ISO_8601_ = 4,
+	VALUE_BOTTOM_CALENDAR_WEEK__US_ = 5,
+	VALUE_BOTTOM_DAY_OF_THE_WEEK = 6,
+} VALUE_BOTTOMValue;
+VALUE_BOTTOMValue enamel_get_value_bottom();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'color_background_bottom'
 GColor enamel_get_color_background_bottom();
 // -----------------------------------------------------
@@ -87,49 +115,41 @@ ANIMATIONSValue enamel_get_animations();
 // Getter for 'show_leading_zeroes'
 typedef enum {
 	SHOW_LEADING_ZEROES_SHOW = 0,
-	SHOW_LEADING_ZEROES_HIDE_FOR_HOURS = 1,
-	SHOW_LEADING_ZEROES_HIDE = 2,
+	SHOW_LEADING_ZEROES_HIDE_ON_TOP = 1,
+	SHOW_LEADING_ZEROES_HIDE_ON_BOTTOM = 2,
+	SHOW_LEADING_ZEROES_HIDE = 3,
 } SHOW_LEADING_ZEROESValue;
 SHOW_LEADING_ZEROESValue enamel_get_show_leading_zeroes();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-// Getter for 'vibrate_on_bt_disconnect'
-typedef enum {
-	VIBRATE_ON_BT_DISCONNECT_NONE = 0,
-	VIBRATE_ON_BT_DISCONNECT_SHORT = 1,
-	VIBRATE_ON_BT_DISCONNECT_LONG = 2,
-	VIBRATE_ON_BT_DISCONNECT_DOUBLE = 3,
-	VIBRATE_ON_BT_DISCONNECT_HEARTBEAT = 4,
-	VIBRATE_ON_BT_DISCONNECT_HALFBEAT = 5,
-} VIBRATE_ON_BT_DISCONNECTValue;
-VIBRATE_ON_BT_DISCONNECTValue enamel_get_vibrate_on_bt_disconnect();
+// Getter for 'quick_launch_timeout'
+#define QUICK_LAUNCH_TIMEOUT_PRECISION 10
+int32_t enamel_get_quick_launch_timeout();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-// Getter for 'vibrate_on_bt_reconnect'
-typedef enum {
-	VIBRATE_ON_BT_RECONNECT_NONE = 0,
-	VIBRATE_ON_BT_RECONNECT_SHORT = 1,
-	VIBRATE_ON_BT_RECONNECT_LONG = 2,
-	VIBRATE_ON_BT_RECONNECT_DOUBLE = 3,
-	VIBRATE_ON_BT_RECONNECT_HEARTBEAT = 4,
-	VIBRATE_ON_BT_RECONNECT_HALFBEAT = 5,
-} VIBRATE_ON_BT_RECONNECTValue;
-VIBRATE_ON_BT_RECONNECTValue enamel_get_vibrate_on_bt_reconnect();
+// Getter for 'show_time_on_start'
+bool enamel_get_show_time_on_start();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
-// Getter for 'hourly_vibration'
+// Getter for 'show_leading_zeroes_on_time'
 typedef enum {
-	HOURLY_VIBRATION_NONE = 0,
-	HOURLY_VIBRATION_SHORT = 1,
-	HOURLY_VIBRATION_LONG = 2,
-	HOURLY_VIBRATION_DOUBLE = 3,
-	HOURLY_VIBRATION_HEARTBEAT = 4,
-	HOURLY_VIBRATION_HALFBEAT = 5,
-} HOURLY_VIBRATIONValue;
-HOURLY_VIBRATIONValue enamel_get_hourly_vibration();
+	SHOW_LEADING_ZEROES_ON_TIME_SHOW = 0,
+	SHOW_LEADING_ZEROES_ON_TIME_HIDE_FOR_HOURS = 1,
+	SHOW_LEADING_ZEROES_ON_TIME_HIDE = 2,
+} SHOW_LEADING_ZEROES_ON_TIMEValue;
+SHOW_LEADING_ZEROES_ON_TIMEValue enamel_get_show_leading_zeroes_on_time();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'first_day_of_the_week'
+typedef enum {
+	FIRST_DAY_OF_THE_WEEK_MONDAY = 0,
+	FIRST_DAY_OF_THE_WEEK_SUNDAY = 1,
+} FIRST_DAY_OF_THE_WEEKValue;
+FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week();
 // -----------------------------------------------------
 
 void enamel_init();

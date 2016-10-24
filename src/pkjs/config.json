@@ -2,7 +2,7 @@
 {
   "type": "heading",
   "id": "main-heading",
-  "defaultValue": "Cut/up",
+  "defaultValue": "Cut/up+",
   "size": 1
 },
 {
@@ -10,7 +10,43 @@
   "items": [
     {
       "type": "heading",
-      "defaultValue": "Hours"
+      "defaultValue": "Top"
+    },
+    {
+      "type": "select",
+      "messageKey": "value_top",
+      "defaultValue": "0",
+      "label": "Value",
+      "options": [
+        {
+          "label": "Day of the month",
+          "value": 0
+        },
+        {
+          "label": "Month",
+          "value": 1
+        },
+        {
+          "label": "Year",
+          "value": 2
+        },
+        {
+          "label": "Battery level",
+          "value": 3
+        },
+        {
+          "label": "Calendar week (ISO 8601)",
+          "value": 4
+        },
+        {
+          "label": "Calendar week (US)",
+          "value": 5
+        },
+        {
+          "label": "Day of the week",
+          "value": 6
+        }
+      ]
     },
     {
       "type": "color",
@@ -95,7 +131,43 @@
   "items": [
     {
       "type": "heading",
-      "defaultValue": "Minutes"
+      "defaultValue": "Bottom"
+    },
+    {
+      "type": "select",
+      "messageKey": "value_bottom",
+      "defaultValue": 1,
+      "label": "Value",
+      "options": [
+        {
+          "label": "Day of the month",
+          "value": 0
+        },
+        {
+          "label": "Month",
+          "value": 1
+        },
+        {
+          "label": "Year",
+          "value": 2
+        },
+        {
+          "label": "Battery level",
+          "value": 3
+        },
+        {
+          "label": "Calendar week (ISO 8601)",
+          "value": 4
+        },
+        {
+          "label": "Calendar week (US)",
+          "value": 5
+        },
+        {
+          "label": "Day of the week",
+          "value": 6
+        }
+      ]
     },
     {
       "type": "color",
@@ -172,6 +244,48 @@
           "value": 0
         },
         {
+          "label": "Hide on top",
+          "value": 1
+        },
+        {
+          "label": "Hide on bottom",
+          "value": 2
+        },
+        {
+          "label": "Hide",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "type": "slider",
+      "messageKey": "quick_launch_timeout",
+      "defaultValue": 2,
+      "label": "Quick launch timeout",
+      "description": "Configure after how many seconds the app returns to the watchface if started via quick lauch.<br>Set to 0 for no timeout.",
+      "min": 0,
+      "max": 10,
+      "step": 0.5
+    },
+    {
+      "type": "toggle",
+      "messageKey": "show_time_on_start",
+      "label": "Show time on startup",
+      "description": "If you use Cut/up+ without the Cut/up watchface you might want to disable showing the time on the startup animation.",
+      "defaultValue": true
+    },
+    {
+      "type": "select",
+      "messageKey": "show_leading_zeroes_on_time",
+      "defaultValue": "0",
+      "label": "Leading zeroes on time",
+      "description": "Use this to configure the time shown on startup to look as the time in the watchface.",
+      "options": [
+        {
+          "label": "Show",
+          "value": 0
+        },
+        {
           "label": "Hide for hours",
           "value": 1
         },
@@ -183,97 +297,17 @@
     },
     {
       "type": "select",
-      "messageKey": "vibrate_on_bt_disconnect",
-      "defaultValue": 3,
-      "label": "Vibration on BT disconnect",
-      "options": [
-        {
-          "label": "None",
-          "value": 0
-        },
-        {
-          "label": "Short",
-          "value": 1
-        },
-        {
-          "label": "Long",
-          "value": 2
-        },
-        {
-          "label": "Double",
-          "value": 3
-        },
-        {
-          "label": "Heartbeat",
-          "value": 4
-        },
-        {
-          "label": "Halfbeat",
-          "value": 5
-        }
-      ]
-    },
-    {
-      "type": "select",
-      "messageKey": "vibrate_on_bt_reconnect",
-      "defaultValue": 3,
-      "label": "Vibration on BT reconnect",
-      "options": [
-        {
-          "label": "None",
-          "value": 0
-        },
-        {
-          "label": "Short",
-          "value": 1
-        },
-        {
-          "label": "Long",
-          "value": 2
-        },
-        {
-          "label": "Double",
-          "value": 3
-        },
-        {
-          "label": "Heartbeat",
-          "value": 4
-        },
-        {
-          "label": "Halfbeat",
-          "value": 5
-        }
-      ]
-    },
-    {
-      "type": "select",
-      "messageKey": "hourly_vibration",
+      "messageKey": "first_day_of_the_week",
       "defaultValue": "0",
-      "label": "Hourly vibration",
+      "label": "First day of the week",
       "options": [
         {
-          "label": "None",
+          "label": "Monday",
           "value": 0
         },
         {
-          "label": "Short",
+          "label": "Sunday",
           "value": 1
-        },
-        {
-          "label": "Long",
-          "value": 2
-        },
-        {
-          "label": "Double",
-          "value": 3
-        },
-        {
-          "label": "Heartbeat",
-          "value": 4
-        },
-        {
-          "label": "Halfbeat",
-          "value": 5
         }
       ]
     }
@@ -281,12 +315,12 @@
 },
 {
   "type": "text",
-  "defaultValue": "If you like the Watchface, don't forget to give it a &hearts; in the Pebble App Store. <span style='font-weight: bold;'>Thanks!</span>",
+  "defaultValue": "If you like the Watchapp, don't forget to give it a &hearts; in the Pebble App Store. <span style='font-weight: bold;'>Thanks!</span>",
   "id": "heart-text"
 },
 {
   "type": "text",
-  "defaultValue": "And if you <span style='font-style: italic;'>really</span> love the Watchface, feel free to donate any amount you like:",
+  "defaultValue": "And if you <span style='font-style: italic;'>really</span> love the Watchapp, feel free to donate any amount you like:",
   "id": "donation-text"
 },
 {
@@ -305,7 +339,7 @@
 },
 {
   "type": "text",
-  "defaultValue": "<center>Also check out my other Watchfaces:<br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/555283c7efff0cc8e50000b0'>Slides of Time</a><br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/5546abfc47bb344acb0000d2'>BCD minimalist</a></center><br>",
+  "defaultValue": "<center>Also check out my Watchfaces:<br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/555283c7efff0cc8e50000b0'>Slides of Time</a><br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/5546abfc47bb344acb0000d2'>BCD minimalist</a><br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/58060628c988667eaa00009e'>Cut/up</a></center><br>",
   "id": "other-text"
 }
 ]
