@@ -341,7 +341,7 @@ static void animation_stopped(Animation *animation, bool finished, void *context
 static void animate(bool top, bool in, bool follow_up) {
   PropertyAnimation* animation;
   animation = property_animation_create_bounds_origin(top ? top_layer : bottom_layer, NULL, in ? &animation_points[0] : top ? &animation_points[1] : &animation_points[2] );
-  animation_set_duration((Animation*)animation, 2*PBL_DISPLAY_WIDTH);
+  animation_set_duration((Animation*)animation, (25*PBL_DISPLAY_WIDTH)/10);
   animation_set_curve((Animation*)animation, (!in || top) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
   animation_properties[top ? 0 : 1].out = !in;
   animation_properties[top ? 0 : 1].follow_up = follow_up;
@@ -411,8 +411,8 @@ static void my_window_load(Window *window) {
 
   // setup the animation start and end points
   animation_points[0] = GPointZero;
-  animation_points[1] = GPoint(-root_bounds.size.w, 20);
-  animation_points[2] = GPoint(root_bounds.size.w, -20);
+  animation_points[1] = GPoint(-((root_bounds.size.w*15)/10), 30);
+  animation_points[2] = GPoint(((root_bounds.size.w*15)/10), -30);
 
   // creates a mask to do the cutting
   mask_layer = layer_create(GRect(root_bounds.origin.x, root_bounds.origin.y+unobstructed_offset, root_bounds.size.w, root_bounds.size.h));
