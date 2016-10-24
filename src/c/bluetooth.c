@@ -4,6 +4,8 @@
 
 extern void bluetooth_listener(bool connected);
 
+#define VIBRATED_ON_ON_DISCONNECTION_KEY 0x742F7501
+
 BluetoothSettings bluetooth_settings;
 
 static const uint32_t heartbeat_segments[] = { 200, 100, 200, 400, 200, 100, 200 };
@@ -16,7 +18,7 @@ static VibePattern halfbeat_pattern = {
   .num_segments = 3,
 };
 
-static bool bt_connected;
+static bool bt_connected = false;
 
 void bluetooth_vibrate(uint8_t vibration_pattern) {
   // check no vibration
@@ -70,14 +72,16 @@ static void bt_handler(bool connected) {
 }
 
 void bluetooth_init() {
-  bluetooth_settings.vibrated_on_disconnection = persist_read_bool(1);
-  bt_connected = bluetooth_connection_service_peek();
+  bluetooth_settings.vibrated_on_disconnection = persist_read_bool(VIBRATED_ON_ON_DISCONNECTION_KEY);
+  bt_connected = connection_service_peek_pebble_app_connection();
   bt_handler(bt_connected);
-  bluetooth_connection_service_subscribe(bt_handler);
+  connection_service_subscribe((ConnectionHandlers) {
+    .pebble_app_connection_handler = bt_handler
+  });
 }
 
 void bluetooth_deinit() {
-  persist_write_bool(1, bluetooth_settings.vibrated_on_disconnection);
+  persist_write_bool(VIBRATED_ON_ON_DISCONNECTION_KEY, bluetooth_settings.vibrated_on_disconnection);
 }
 
 bool bluetooth_connected() {
