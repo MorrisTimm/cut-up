@@ -131,7 +131,7 @@ static void exit_app() {
   }
   if(ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations) {
     cut_up_update(true, true, false);
-    app_timer_register(2*PBL_DISPLAY_WIDTH+PBL_DISPLAY_WIDTH/3, timer_exit, NULL);
+    app_timer_register((25*PBL_DISPLAY_WIDTH)/10, timer_exit, NULL);
   } else {
     window_stack_pop_all(false);
   }
