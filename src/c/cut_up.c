@@ -2,7 +2,6 @@
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fctx.h>
 #include "cut_up.h"
-#include "bluetooth.h"
 #include "enamel.h"
 
 extern void start();
@@ -46,11 +45,11 @@ static AnimationProperties animation_properties[2];
 
 static Layer* top_layer;
 static Layer* top_copy_layer;
-static char top_text[3] = "23";
+static char top_text[3] = "";
 
 static Layer* bottom_layer;
 static Layer* bottom_copy_layer;
-static char bottom_text[3] = "59";
+static char bottom_text[3] = "";
 
 static Layer* cut_layer;
 
@@ -297,9 +296,9 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
 static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
   // draw the cuting line
   fctx_init_context(&fctx, ctx);
-  draw_cut_line_with_fctx(ctx, -1, PBL_DISPLAY_WIDTH > 180 ?  3 :  2, bluetooth_connected() ? settings.color_the_cut : settings.color_the_cut_disconnected);
+  draw_cut_line_with_fctx(ctx, -1, PBL_DISPLAY_WIDTH > 180 ?  3 :  2, settings.color_the_cut);
   fctx_deinit_context(&fctx);
-  
+
 #if 0 // center lines to help with adjustment
   GRect bounds = layer_get_bounds(layer);
   graphics_context_set_stroke_width(ctx, 1);
@@ -354,7 +353,7 @@ static void animate(bool top, bool in, bool follow_up) {
 
 static void did_focus_handler(bool in_focus) {
   // update if the focus has been regained
-  if(in_focus) {
+  if(!is_in_focus && in_focus) {
     if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
       app_focus_service_unsubscribe();
     }
@@ -366,7 +365,7 @@ static void did_focus_handler(bool in_focus) {
 
 static void will_focus_handler(bool in_focus) {
   // update when the watchface is about to lose focus
-  if(!in_focus) {
+  if(is_in_focus && !in_focus) {
     is_in_focus = in_focus;
     animate(true, false, false);
     animate(false, false, false);
@@ -450,26 +449,28 @@ static void my_window_load(Window *window) {
   layer_set_update_proc(cut_layer, cut_layer_update_proc);
   layer_add_child(mask_layer, cut_layer);
 
-  if(settings.animations) {
+  if(settings.startup_animation) {
     layer_set_bounds(top_layer, GRect(animation_points[2].x, animation_points[2].y, root_bounds.size.w, root_bounds.size.h));
     layer_set_bounds(bottom_layer, GRect(animation_points[1].x, animation_points[1].y, root_bounds.size.w, root_bounds.size.h));
+  } else {
+    is_in_focus = true;
+  }
+  if(settings.animations) {
     app_focus_service_subscribe_handlers((AppFocusHandlers) {
       .did_focus = did_focus_handler,
       .will_focus = will_focus_handler,
     });
   }
-
-  bluetooth_init();
   start();
 }
 
-void cut_up_update(bool top, bool bottom) {
+void cut_up_update(bool top, bool bottom, bool allow_follow_up) {
   if(ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations && (top || bottom) && is_in_focus) {
     if(top) {
-      animate(true, false, true);
+      animate(true, false, allow_follow_up);
     }
     if(bottom) {
-      animate(false, false, true);
+      animate(false, false, allow_follow_up);
     }
   } else {
     memcpy(top_text, update_text[0], 2);
@@ -478,20 +479,16 @@ void cut_up_update(bool top, bool bottom) {
   layer_mark_dirty(window_get_root_layer(my_window));
 }
 
-void cut_up_init() {
+Window* cut_up_init() {
   my_window = window_create();
   window_set_window_handlers(my_window, (WindowHandlers) {
     .load = my_window_load,
     //.unload = TODO
   });
   window_stack_push(my_window, true);
+  return my_window;
 }
 
 void cut_up_deinit() {
-  bluetooth_deinit();
   window_destroy(my_window);
-}
-
-void bluetooth_listener(bool connected) {
-  cut_up_update(false, false);
 }
