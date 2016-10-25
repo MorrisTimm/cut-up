@@ -172,6 +172,14 @@ int32_t enamel_get_quick_launch_timeout(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'first_day_of_the_week'
+FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week(){
+	Tuple* tuple = dict_find(&s_dict, 1349210911);
+	return tuple ? atoi(tuple->value->cstring) : 0;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'show_time_on_start'
 bool enamel_get_show_time_on_start(){
 	Tuple* tuple = dict_find(&s_dict, 2230560336);
@@ -183,14 +191,6 @@ bool enamel_get_show_time_on_start(){
 // Getter for 'show_leading_zeroes_on_time'
 SHOW_LEADING_ZEROES_ON_TIMEValue enamel_get_show_leading_zeroes_on_time(){
 	Tuple* tuple = dict_find(&s_dict, 1956971886);
-	return tuple ? atoi(tuple->value->cstring) : 0;
-}
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-// Getter for 'first_day_of_the_week'
-FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week(){
-	Tuple* tuple = dict_find(&s_dict, 1349210911);
 	return tuple ? atoi(tuple->value->cstring) : 0;
 }
 // -----------------------------------------------------
@@ -219,8 +219,8 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 2
 		+ 7 + 2
 		+ 7 + 4
-		+ 7 + 4
 		+ 7 + 2
+		+ 7 + 4
 		+ 7 + 2
 ;
 }
@@ -247,9 +247,9 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_animations) return 2502829527;
 	if( key == MESSAGE_KEY_show_leading_zeroes) return 1614853234;
 	if( key == MESSAGE_KEY_quick_launch_timeout) return 3053448009;
+	if( key == MESSAGE_KEY_first_day_of_the_week) return 1349210911;
 	if( key == MESSAGE_KEY_show_time_on_start) return 2230560336;
 	if( key == MESSAGE_KEY_show_leading_zeroes_on_time) return 1956971886;
-	if( key == MESSAGE_KEY_first_day_of_the_week) return 1349210911;
 	return 0;
 }
 

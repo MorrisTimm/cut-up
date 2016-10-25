@@ -262,10 +262,26 @@
       "messageKey": "quick_launch_timeout",
       "defaultValue": 2,
       "label": "Quick launch timeout",
-      "description": "Configure after how many seconds the app returns to the watchface if started via quick lauch.<br>Set to 0 for no timeout.",
+      "description": "Configure after how many seconds the app returns to the watchface if started via quick lauch. Set to 0 for no timeout.",
       "min": 0,
       "max": 10,
       "step": 0.5
+    },
+    {
+      "type": "select",
+      "messageKey": "first_day_of_the_week",
+      "defaultValue": "0",
+      "label": "First day of the week",
+      "options": [
+        {
+          "label": "Monday",
+          "value": 0
+        },
+        {
+          "label": "Sunday",
+          "value": 1
+        }
+      ]
     },
     {
       "type": "toggle",
@@ -292,22 +308,6 @@
         {
           "label": "Hide",
           "value": 2
-        }
-      ]
-    },
-    {
-      "type": "select",
-      "messageKey": "first_day_of_the_week",
-      "defaultValue": "0",
-      "label": "First day of the week",
-      "options": [
-        {
-          "label": "Monday",
-          "value": 0
-        },
-        {
-          "label": "Sunday",
-          "value": 1
         }
       ]
     }

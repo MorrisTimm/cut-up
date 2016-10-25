@@ -129,6 +129,15 @@ int32_t enamel_get_quick_launch_timeout();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'first_day_of_the_week'
+typedef enum {
+	FIRST_DAY_OF_THE_WEEK_MONDAY = 0,
+	FIRST_DAY_OF_THE_WEEK_SUNDAY = 1,
+} FIRST_DAY_OF_THE_WEEKValue;
+FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'show_time_on_start'
 bool enamel_get_show_time_on_start();
 // -----------------------------------------------------
@@ -141,15 +150,6 @@ typedef enum {
 	SHOW_LEADING_ZEROES_ON_TIME_HIDE = 2,
 } SHOW_LEADING_ZEROES_ON_TIMEValue;
 SHOW_LEADING_ZEROES_ON_TIMEValue enamel_get_show_leading_zeroes_on_time();
-// -----------------------------------------------------
-
-// -----------------------------------------------------
-// Getter for 'first_day_of_the_week'
-typedef enum {
-	FIRST_DAY_OF_THE_WEEK_MONDAY = 0,
-	FIRST_DAY_OF_THE_WEEK_SUNDAY = 1,
-} FIRST_DAY_OF_THE_WEEKValue;
-FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week();
 // -----------------------------------------------------
 
 void enamel_init();

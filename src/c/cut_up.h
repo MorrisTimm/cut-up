@@ -7,7 +7,7 @@ enum {
 };
 
 typedef struct {
-  bool startup_animation;
+  bool start_visible;
   GColor color_background_top;
   GColor color_background_bottom;
   GColor color_text_top;

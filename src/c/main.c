@@ -7,13 +7,13 @@ extern Settings settings;
 static char current_text[2][3];
 extern char update_text[2][3];
 
-static Window* the_window;
+static Window* the_window = NULL;
+static bool is_in_focus = false;
 static bool show_leading_zeroes_top;
 static bool show_leading_zeroes_bottom;
 static bool exiting = false;
 
 static void load_settings() {
-  settings.startup_animation = false; // this is not the animation setting but a way to control the dífferent startup scenario for Cut/up+
   settings.color_background_top = enamel_get_color_background_top();
   settings.color_background_bottom = enamel_get_color_background_bottom();
   settings.color_text_top = enamel_get_color_text_top();
@@ -31,6 +31,7 @@ static void load_settings() {
   settings.offset_y_text_top = 0;
   settings.offset_y_text_bottom = 0;
 #endif
+  settings.start_visible = (APP_LAUNCH_QUICK_LAUNCH == launch_reason() && enamel_get_show_time_on_start()) || !settings.animations;
 
   uint8_t show_leading_zeroes = enamel_get_show_leading_zeroes();
   show_leading_zeroes_top = SHOW_LEADING_ZEROES_SHOW == show_leading_zeroes || SHOW_LEADING_ZEROES_HIDE_ON_BOTTOM == show_leading_zeroes;
@@ -111,11 +112,15 @@ static void startup_handler(void* data) {
   set_value(update_text[CUT_UP_BOTTOM], enamel_get_value_bottom(), tick_time);
 
   handle_leading_zeroes();
-  cut_up_update(memcmp(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2), memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), true);
+  cut_up_update(memcmp(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2),
+                memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), true);
 }
 
 static void enamel_settings_received_handler(void* context) {
   load_settings();
+  if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+    app_focus_service_unsubscribe();
+  }
   startup_handler(context);
 }
 
@@ -141,11 +146,35 @@ static void timer_handler(void* data) {
   exit_app();
 }
 
-void start() {
-  time_t now = time(NULL);
-  struct tm* tick_time = localtime(&now);
+static void did_focus_handler(bool in_focus) {
+  // show text if the watchface gained focus
+  if(!is_in_focus && in_focus) {
+    is_in_focus = in_focus;
+    static bool startup = true;
+    if(startup) {
+      startup = false;
+      if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+        app_focus_service_unsubscribe();
+      }
+      startup_handler(NULL);
+    } else {
+      cut_up_update(true, true, true);
+    }
+  }
+}
 
+static void will_focus_handler(bool in_focus) {
+  // hide text if the watchface is about to lose focus
+  if(is_in_focus && !in_focus) {
+    is_in_focus = in_focus;
+    cut_up_update(true, true, false);
+  }
+}
+
+void start() {
   if(APP_LAUNCH_QUICK_LAUNCH == launch_reason() && enamel_get_show_time_on_start()) {
+    time_t now = time(NULL);
+    struct tm* tick_time = localtime(&now);
     strftime(update_text[CUT_UP_TOP], 3, clock_is_24h_style() ? "%H" : "%I", tick_time);
     strftime(update_text[CUT_UP_BOTTOM], 3, "%M", tick_time);
     uint8_t time_zeroes = enamel_get_show_leading_zeroes_on_time();
@@ -167,7 +196,10 @@ void start() {
     app_timer_register(timeout, timer_handler, NULL);
   }
 
-  app_timer_register(10, startup_handler, NULL);
+  app_focus_service_subscribe_handlers((AppFocusHandlers) {
+    .did_focus = did_focus_handler,
+    .will_focus = will_focus_handler,
+  });
 }
 
 static void click_handler(ClickRecognizerRef recognizer, void *context) {
