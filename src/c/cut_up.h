@@ -22,6 +22,6 @@ typedef struct {
   int8_t offset_y_text_bottom;
 } Settings;
 
-void cut_up_update(bool hours, bool minutes, bool allow_follow_up);
+void cut_up_update(bool hours, bool minutes, bool visible);
 Window* cut_up_init();
 void cut_up_deinit();

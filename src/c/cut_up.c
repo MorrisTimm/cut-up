@@ -343,7 +343,6 @@ static void animation_stopped(Animation *animation, bool finished, void *context
 static void animate(int pos, bool visible) {
   PropertyAnimation* animation;
   animation = property_animation_create_bounds_origin(text_layer[pos], NULL, is_visible[pos] ? (CUT_UP_TOP == pos ? &animation_points[ANIMATION_TARGET_LEFT] : &animation_points[ANIMATION_TARGET_RIGHT]) : &animation_points[ANIMATION_TARGET_ZERO]);
-  GPoint* p = is_visible[pos] ? (CUT_UP_TOP == pos ? &animation_points[ANIMATION_TARGET_LEFT] : &animation_points[ANIMATION_TARGET_RIGHT]) : &animation_points[ANIMATION_TARGET_ZERO];
   animation_set_duration((Animation*)animation, (25*PBL_DISPLAY_WIDTH)/10);
   animation_set_curve((Animation*)animation, (is_visible[pos] || CUT_UP_TOP == pos) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
   should_be_visible[pos] = visible;
