@@ -181,19 +181,60 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_BACK, click_handler);
 }
 
+#if PBL_API_EXISTS(app_glance_reload)
+static void app_glance_reload_callback(AppGlanceReloadSession *session, size_t limit, void *context) {
+  char message[32];
+  time_t start_of_day = time_start_of_today();
+  AppGlanceResult result = APP_GLANCE_RESULT_SUCCESS;
+
+  // add as many slices as possible
+  for(size_t i = 0; i < limit && APP_GLANCE_RESULT_SUCCESS == result; ++i, start_of_day += SECONDS_PER_DAY) {
+    struct tm* tick_time = localtime(&start_of_day);
+    strftime(message, 32, "%A, %x", tick_time);
+    const AppGlanceSlice entry = (AppGlanceSlice) {
+      .layout = {
+        .subtitle_template_string = message
+      },
+      .expiration_time = start_of_day + SECONDS_PER_DAY
+    };
+    result = app_glance_add_slice(session, entry);
+  }
+
+  // schedule a wakeup in case the app is not started before the slices run out
+  while(E_RANGE == wakeup_schedule(start_of_day-SECONDS_PER_HOUR, 0, false)) {
+    start_of_day -= SECONDS_PER_MINUTE;
+  }
+}
+#endif
 
 void handle_init(void) {
-  enamel_init();
-  enamel_settings_received_subscribe(enamel_settings_received_handler, NULL);
-  events_app_message_open();
-  load_settings();
-  the_window = cut_up_init();
-  window_set_click_config_provider(the_window, click_config_provider);
+#if PBL_API_EXISTS(app_glance_reload)
+  setlocale(LC_ALL, "");
+  wakeup_cancel_all();
+  if(APP_LAUNCH_WAKEUP == launch_reason()) {
+    exit_reason_set(APP_EXIT_ACTION_PERFORMED_SUCCESSFULLY);
+    window_stack_pop_all(false);
+  } else
+#endif
+  {
+    enamel_init();
+    enamel_settings_received_subscribe(enamel_settings_received_handler, NULL);
+    events_app_message_open();
+    load_settings();
+    the_window = cut_up_init();
+    window_set_click_config_provider(the_window, click_config_provider);
+  }
 }
 
 void handle_deinit(void) {
-  cut_up_deinit();
-  enamel_deinit();
+#if PBL_API_EXISTS(app_glance_reload)
+  app_glance_reload(app_glance_reload_callback, NULL);
+  if(APP_LAUNCH_WAKEUP != launch_reason())
+#endif
+  {
+    cut_up_deinit();
+    enamel_deinit();
+  }
 }
 
 int main(void) {
