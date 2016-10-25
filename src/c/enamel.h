@@ -73,6 +73,44 @@ int32_t enamel_get_offset_y_text_bottom();
 #endif
 // -----------------------------------------------------
 
+#if !defined(PBL_PLATFORM_APLITE)
+// -----------------------------------------------------
+// Getter for 'tap_for_date'
+bool enamel_get_tap_for_date();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'tapping_threshold'
+#define TAPPING_THRESHOLD_PRECISION 1
+int32_t enamel_get_tapping_threshold();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'date_timeout'
+#define DATE_TIMEOUT_PRECISION 10
+int32_t enamel_get_date_timeout();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'date_format'
+typedef enum {
+	DATE_FORMAT_MONTH_ON_TOP = 0,
+	DATE_FORMAT_MONTH_AT_BOTTOM = 1,
+} DATE_FORMATValue;
+DATE_FORMATValue enamel_get_date_format();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'date_leading_zeroes'
+typedef enum {
+	DATE_LEADING_ZEROES_SHOW = 0,
+	DATE_LEADING_ZEROES_HIDE_FOR_MONTH = 1,
+	DATE_LEADING_ZEROES_HIDE = 2,
+} DATE_LEADING_ZEROESValue;
+DATE_LEADING_ZEROESValue enamel_get_date_leading_zeroes();
+// -----------------------------------------------------
+
+#endif
 // -----------------------------------------------------
 // Getter for 'animations'
 typedef enum {

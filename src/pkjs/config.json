@@ -139,6 +139,79 @@
   "items": [
     {
       "type": "heading",
+      "defaultValue": "Date"
+    },
+    {
+      "type": "toggle",
+      "messageKey": "tap_for_date",
+      "label": "Show on tapping",
+      "description": "Shake the watch to show the date.",
+      "defaultValue": false
+    },
+    {
+      "type": "slider",
+      "messageKey": "tapping_threshold",
+      "defaultValue": 2,
+      "label": "Taps required",
+      "description": "The date is only shown if enough taps occur shortly after another to avoid unwanted date display.",
+      "min": 1,
+      "max": 4,
+      "step": 1
+    },
+    {
+      "type": "slider",
+      "messageKey": "date_timeout",
+      "defaultValue": 2,
+      "label": "Date timeout",
+      "description": "Configure how many seconds the date is shown before returning to the time.",
+      "min": 1,
+      "max": 10,
+      "step": 0.5
+    },
+    {
+      "type": "select",
+      "messageKey": "date_format",
+      "defaultValue": 1,
+      "label": "Date format",
+      "options": [
+        {
+          "label": "Month on top",
+          "value": 0
+        },
+        {
+          "label": "Month at bottom",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "messageKey": "date_leading_zeroes",
+      "defaultValue": "0",
+      "label": "Leading zeroes",
+      "options": [
+        {
+          "label": "Show",
+          "value": 0
+        },
+        {
+          "label": "Hide for month",
+          "value": 1
+        },
+        {
+          "label": "Hide",
+          "value": 2
+        }
+      ]
+    }
+  ],
+  "capabilities": ["NOT_PLATFORM_APLITE"]
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
       "defaultValue": "Other settings"
     },
     {

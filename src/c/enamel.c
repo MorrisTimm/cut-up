@@ -131,6 +131,49 @@ int32_t enamel_get_offset_y_text_bottom(){
 // -----------------------------------------------------
 #endif
 
+#if !defined(PBL_PLATFORM_APLITE)
+// -----------------------------------------------------
+// Getter for 'tap_for_date'
+bool enamel_get_tap_for_date(){
+	Tuple* tuple = dict_find(&s_dict, 165242306);
+	return tuple ? tuple->value->int32 == 1 : false;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'tapping_threshold'
+int32_t enamel_get_tapping_threshold(){
+	Tuple* tuple = dict_find(&s_dict, 3930776622);
+		
+	return tuple ? tuple->value->int32 : 2;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'date_timeout'
+int32_t enamel_get_date_timeout(){
+	Tuple* tuple = dict_find(&s_dict, 344881128);
+	return tuple ? tuple->value->int32 : 20;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'date_format'
+DATE_FORMATValue enamel_get_date_format(){
+	Tuple* tuple = dict_find(&s_dict, 4192502625);
+	return tuple ? atoi(tuple->value->cstring) : 1;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
+// Getter for 'date_leading_zeroes'
+DATE_LEADING_ZEROESValue enamel_get_date_leading_zeroes(){
+	Tuple* tuple = dict_find(&s_dict, 1960177131);
+	return tuple ? atoi(tuple->value->cstring) : 0;
+}
+// -----------------------------------------------------
+
+#endif
 // -----------------------------------------------------
 // Getter for 'animations'
 ANIMATIONSValue enamel_get_animations(){
@@ -190,6 +233,13 @@ static uint16_t prv_get_inbound_size() {
 #if !defined(PBL_PLATFORM_APLITE)
 		+ 7 + 4
 #endif
+#if !defined(PBL_PLATFORM_APLITE)
+		+ 7 + 4
+		+ 7 + 4
+		+ 7 + 4
+		+ 7 + 2
+		+ 7 + 2
+#endif
 		+ 7 + 2
 		+ 7 + 2
 		+ 7 + 2
@@ -214,6 +264,13 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_color_text_outline_bottom) return 3680561045;
 #if !defined(PBL_PLATFORM_APLITE)
 	if( key == MESSAGE_KEY_offset_y_text_bottom) return 1299163365;
+#endif
+#if !defined(PBL_PLATFORM_APLITE)
+	if( key == MESSAGE_KEY_tap_for_date) return 165242306;
+	if( key == MESSAGE_KEY_tapping_threshold) return 3930776622;
+	if( key == MESSAGE_KEY_date_timeout) return 344881128;
+	if( key == MESSAGE_KEY_date_format) return 4192502625;
+	if( key == MESSAGE_KEY_date_leading_zeroes) return 1960177131;
 #endif
 	if( key == MESSAGE_KEY_animations) return 2502829527;
 	if( key == MESSAGE_KEY_show_leading_zeroes) return 1614853234;

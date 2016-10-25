@@ -29,7 +29,12 @@
             "hourly_vibration",
             "offset_y_text_top",
             "offset_y_text_bottom",
-            "show_leading_zeroes"
+            "show_leading_zeroes",
+            "tap_for_date",
+            "tapping_threshold",
+            "date_format",
+            "date_timeout",
+            "date_leading_zeroes"
         ],
         "projectType": "native",
         "resources": {
@@ -68,5 +73,5 @@
             "watchface": true
         }
     },
-    "version": "1.1.0"
+    "version": "1.2.0"
 }

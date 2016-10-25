@@ -2,7 +2,6 @@
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fctx.h>
 #include "cut_up.h"
-#include "bluetooth.h"
 #include "enamel.h"
 
 extern void start();
@@ -18,9 +17,15 @@ enum {
   OUTLINE_FONT
 };
 
+enum {
+  ANIMATION_TARGET_ZERO,
+  ANIMATION_TARGET_LEFT,
+  ANIMATION_TARGET_RIGHT
+};
+
 typedef struct {
   bool out;
-  bool follow_up;
+  bool visible;
 } AnimationProperties;
 
 Settings settings;
@@ -43,19 +48,15 @@ static GPathInfo cutting_path_info = {
 };
 static GPoint animation_points[3];
 static AnimationProperties animation_properties[2];
+static bool is_visible[2];
+static bool should_be_visible[2];
 
-static Layer* top_layer;
-static Layer* top_copy_layer;
-static char top_text[3] = "23";
-
-static Layer* bottom_layer;
-static Layer* bottom_copy_layer;
-static char bottom_text[3] = "59";
-
+static Layer* text_layer[2];
+static Layer* copy_layer[2];
+static char text[2][3] = {"", ""};
 static Layer* cut_layer;
 
 static int16_t unobstructed_offset = 0;
-static bool is_in_focus = false;
 
 static void mask_layer_update_proc(Layer* layer, GContext* ctx) {
   // create mask bitmap only when needed
@@ -150,30 +151,30 @@ static void top_layer_update_proc(Layer* layer, GContext* ctx) {
      !gcolor_equal(settings.color_the_cut_outline_top, settings.color_background_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-33, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], FONT, bounds.size.w-33, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 11, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], FONT, 11, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_top, settings.color_text_top)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-33, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], OUTLINE_FONT, bounds.size.w-33, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], OUTLINE_FONT, bounds.size.w-8, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentRight, FTextAnchorBottom);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 11, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], OUTLINE_FONT, 11, bounds.size.h/2+40-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, top_text, OUTLINE_FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_TOP], OUTLINE_FONT, 0, bounds.size.h/2+(bounds.size.h*10)/42-settings.offset_y_text_top, settings.color_text_outline_top, GTextAlignmentLeft, FTextAnchorBottom);
 #endif
 #endif
   }
@@ -224,30 +225,30 @@ static void bottom_layer_update_proc(Layer* layer, GContext* ctx) {
      !gcolor_equal(settings.color_the_cut_outline_bottom, settings.color_background_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-147, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], FONT, bounds.size.w-147, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, 10, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], FONT, 10, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w-12, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], FONT, bounds.size.w-12, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
   if(!gcolor_equal(settings.color_text_outline_bottom, settings.color_text_bottom)) {
 #ifdef ALTERNATE_ALIGNMENT
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], OUTLINE_FONT, bounds.size.w-147, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT,  10, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], OUTLINE_FONT,  10, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentLeft, FTextAnchorCapTop);
 #endif
 #else
 #ifdef PBL_ROUND
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w-12, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], OUTLINE_FONT, bounds.size.w-12, bounds.size.h/2-12-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #else
-    draw_text_with_fctx(ctx, bounds.origin, bottom_text, OUTLINE_FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
+    draw_text_with_fctx(ctx, bounds.origin, text[CUT_UP_BOTTOM], OUTLINE_FONT, bounds.size.w, bounds.size.h/2-bounds.size.h/14-settings.offset_y_text_bottom, settings.color_text_outline_bottom, GTextAlignmentRight, FTextAnchorCapTop);
 #endif
 #endif
   }
@@ -297,9 +298,9 @@ static void bottom_copy_layer_update_proc(Layer* layer, GContext* ctx) {
 static void cut_layer_update_proc(Layer* layer, GContext* ctx) {
   // draw the cuting line
   fctx_init_context(&fctx, ctx);
-  draw_cut_line_with_fctx(ctx, -1, PBL_DISPLAY_WIDTH > 180 ?  3 :  2, bluetooth_connected() ? settings.color_the_cut : settings.color_the_cut_disconnected);
+  draw_cut_line_with_fctx(ctx, -1, PBL_DISPLAY_WIDTH > 180 ?  3 :  2, settings.color_the_cut);
   fctx_deinit_context(&fctx);
-  
+
 #if 0 // center lines to help with adjustment
   GRect bounds = layer_get_bounds(layer);
   graphics_context_set_stroke_width(ctx, 1);
@@ -324,53 +325,31 @@ static void unobstructed_area_change(AnimationProgress progress, void* context) 
 }
 #endif // PBL_API_EXISTS(unobstructed_area_service_subscribe)
 
-static void animate(bool top, bool in, bool follow_up);
+static void animate(int pos, bool visible);
 static void animation_stopped(Animation *animation, bool finished, void *context) {
-  int index = (int)context;
-  if(animation_properties[index].out && animation_properties[index].follow_up) {
-    if(0 == index) {
-      layer_set_bounds(top_layer, GRect(animation_points[2].x, animation_points[2].y, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
-      memcpy(top_text, update_text[0], 2);
-    }else {
-      layer_set_bounds(bottom_layer, GRect(animation_points[1].x, animation_points[1].y, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
-      memcpy(bottom_text, update_text[1], 2);
+  int pos = (int)context;
+  is_visible[pos] = !is_visible[pos];
+  if(is_visible[pos] != should_be_visible[pos]) {
+    if(CUT_UP_TOP == pos) {
+      layer_set_bounds(text_layer[pos], GRect(animation_points[ANIMATION_TARGET_RIGHT].x, animation_points[ANIMATION_TARGET_RIGHT].y, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
+    } else {
+      layer_set_bounds(text_layer[pos], GRect(animation_points[ANIMATION_TARGET_LEFT].x, animation_points[ANIMATION_TARGET_LEFT].y, PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT));
     }
-    animate(0 == index, true, true);
+    memcpy(text[pos], update_text[pos], 2);
+    animate(pos, should_be_visible[pos]);
   }
 }
 
-static void animate(bool top, bool in, bool follow_up) {
+static void animate(int pos, bool visible) {
   PropertyAnimation* animation;
-  animation = property_animation_create_bounds_origin(top ? top_layer : bottom_layer, NULL, in ? &animation_points[0] : top ? &animation_points[1] : &animation_points[2] );
-  animation_set_duration((Animation*)animation, 2*PBL_DISPLAY_WIDTH);
-  animation_set_curve((Animation*)animation, (!in || top) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
-  animation_properties[top ? 0 : 1].out = !in;
-  animation_properties[top ? 0 : 1].follow_up = follow_up;
+  animation = property_animation_create_bounds_origin(text_layer[pos], NULL, is_visible[pos] ? (CUT_UP_TOP == pos ? &animation_points[ANIMATION_TARGET_LEFT] : &animation_points[ANIMATION_TARGET_RIGHT]) : &animation_points[ANIMATION_TARGET_ZERO]);
+  animation_set_duration((Animation*)animation, (25*PBL_DISPLAY_WIDTH)/10);
+  animation_set_curve((Animation*)animation, (is_visible[pos] || CUT_UP_TOP == pos) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
+  should_be_visible[pos] = visible;
   animation_set_handlers((Animation*)animation, (AnimationHandlers) {
     .stopped = animation_stopped
-  }, (void*)(top ? 0 : 1));
+  }, (void*)pos);
   animation_schedule((Animation*)animation);
-}
-
-static void did_focus_handler(bool in_focus) {
-  // update if the focus has been regained
-  if(in_focus) {
-    if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
-      app_focus_service_unsubscribe();
-    }
-    is_in_focus = in_focus;
-    animate(true, true, false);
-    animate(false, true, false);
-  }
-}
-
-static void will_focus_handler(bool in_focus) {
-  // update when the watchface is about to lose focus
-  if(!in_focus) {
-    is_in_focus = in_focus;
-    animate(true, false, false);
-    animate(false, false, false);
-  }
 }
 
 static void my_window_load(Window *window) {
@@ -412,8 +391,8 @@ static void my_window_load(Window *window) {
 
   // setup the animation start and end points
   animation_points[0] = GPointZero;
-  animation_points[1] = GPoint(-root_bounds.size.w, 20);
-  animation_points[2] = GPoint(root_bounds.size.w, -20);
+  animation_points[1] = GPoint(-((root_bounds.size.w*15)/10), 30);
+  animation_points[2] = GPoint(((root_bounds.size.w*15)/10), -30);
 
   // creates a mask to do the cutting
   mask_layer = layer_create(GRect(root_bounds.origin.x, root_bounds.origin.y+unobstructed_offset, root_bounds.size.w, root_bounds.size.h));
@@ -421,9 +400,9 @@ static void my_window_load(Window *window) {
   layer_add_child(root_layer, mask_layer);
 
   // draws the top text
-  top_layer = layer_create(root_bounds);
-  layer_set_update_proc(top_layer, top_layer_update_proc);
-  layer_add_child(mask_layer, top_layer);
+  text_layer[CUT_UP_TOP] = layer_create(root_bounds);
+  layer_set_update_proc(text_layer[CUT_UP_TOP], top_layer_update_proc);
+  layer_add_child(mask_layer, text_layer[CUT_UP_TOP]);
 
   // cuts the bottom of the top text
   cutting_layer = layer_create(root_bounds);
@@ -431,67 +410,68 @@ static void my_window_load(Window *window) {
   layer_add_child(mask_layer, cutting_layer);
 
   // copies the cut top text to backbuffer
-  top_copy_layer = layer_create(root_bounds);
-  layer_set_update_proc(top_copy_layer, top_copy_layer_update_proc);
-  layer_add_child(mask_layer, top_copy_layer);
+  copy_layer[CUT_UP_TOP] = layer_create(root_bounds);
+  layer_set_update_proc(copy_layer[CUT_UP_TOP], top_copy_layer_update_proc);
+  layer_add_child(mask_layer, copy_layer[CUT_UP_TOP]);
 
   // draws the bottom text
-  bottom_layer = layer_create(root_bounds);
-  layer_set_update_proc(bottom_layer, bottom_layer_update_proc);
-  layer_add_child(mask_layer, bottom_layer);
+  text_layer[CUT_UP_BOTTOM] = layer_create(root_bounds);
+  layer_set_update_proc(text_layer[CUT_UP_BOTTOM], bottom_layer_update_proc);
+  layer_add_child(mask_layer, text_layer[CUT_UP_BOTTOM]);
 
   // copies the cut top text from the backbuffer over the bottom text
-  bottom_copy_layer = layer_create(root_bounds);
-  layer_set_update_proc(bottom_copy_layer, bottom_copy_layer_update_proc);
-  layer_add_child(mask_layer, bottom_copy_layer);
+  copy_layer[CUT_UP_BOTTOM] = layer_create(root_bounds);
+  layer_set_update_proc(copy_layer[CUT_UP_BOTTOM], bottom_copy_layer_update_proc);
+  layer_add_child(mask_layer, copy_layer[CUT_UP_BOTTOM]);
 
   // draws the cut line
   cut_layer = layer_create(root_bounds);
   layer_set_update_proc(cut_layer, cut_layer_update_proc);
   layer_add_child(mask_layer, cut_layer);
 
-  if(settings.animations) {
-    layer_set_bounds(top_layer, GRect(animation_points[2].x, animation_points[2].y, root_bounds.size.w, root_bounds.size.h));
-    layer_set_bounds(bottom_layer, GRect(animation_points[1].x, animation_points[1].y, root_bounds.size.w, root_bounds.size.h));
-    app_focus_service_subscribe_handlers((AppFocusHandlers) {
-      .did_focus = did_focus_handler,
-      .will_focus = will_focus_handler,
-    });
+  // set the text layer starting position
+  is_visible[CUT_UP_TOP] = settings.start_visible;
+  is_visible[CUT_UP_BOTTOM] = settings.start_visible;
+  if(!settings.start_visible) {
+    layer_set_bounds(text_layer[CUT_UP_TOP], GRect(animation_points[2].x, animation_points[2].y, root_bounds.size.w, root_bounds.size.h));
+    layer_set_bounds(text_layer[CUT_UP_BOTTOM], GRect(animation_points[1].x, animation_points[1].y, root_bounds.size.w, root_bounds.size.h));
   }
 
-  bluetooth_init();
+  // signal ready to main
   start();
 }
 
-void cut_up_update(bool top, bool bottom) {
-  if(ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations && (top || bottom) && is_in_focus) {
+void cut_up_update(bool top, bool bottom, bool visible) {
+  if(settings.animations && (top || bottom)) {
+    if(!is_visible[CUT_UP_TOP]) {
+      memcpy(text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2);
+    }
+    if(!is_visible[CUT_UP_BOTTOM]) {
+      memcpy(text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2);
+    }
     if(top) {
-      animate(true, false, true);
+      animate(CUT_UP_TOP, visible);
     }
     if(bottom) {
-      animate(false, false, true);
+      animate(CUT_UP_BOTTOM, visible);
     }
   } else {
-    memcpy(top_text, update_text[0], 2);
-    memcpy(bottom_text, update_text[1], 2);
+    memcpy(text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2);
+    memcpy(text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2);
   }
   layer_mark_dirty(window_get_root_layer(my_window));
 }
 
-void cut_up_init() {
+Window* cut_up_init() {
   my_window = window_create();
   window_set_window_handlers(my_window, (WindowHandlers) {
     .load = my_window_load,
     //.unload = TODO
   });
   window_stack_push(my_window, true);
+  return my_window;
 }
 
 void cut_up_deinit() {
-  bluetooth_deinit();
   window_destroy(my_window);
-}
-
-void bluetooth_listener(bool connected) {
-  cut_up_update(false, false);
 }
