@@ -373,12 +373,17 @@
   "id": "donation-text-2"
 },
 {
+  "type": "text",
+  "defaultValue": "<center>Make sure to check out <a style='text-decoration: none; font-weight: bold;' href='https://apps.getpebble.com/applications/580e6947bbd9629ad2000026'>Cut/up+</a>, the companion Watchapp for <span style='font-weight: bold;'>Cut/up</span>!</center>",
+  "id": "plus-text"
+},
+{
   "type": "submit",
   "defaultValue": "Save"
 },
 {
   "type": "text",
-  "defaultValue": "<center>Also check out my other Watchfaces:<br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/555283c7efff0cc8e50000b0'>Slides of Time</a><br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/5546abfc47bb344acb0000d2'>BCD minimalist</a></center><br>",
+  "defaultValue": "<center>Also check out my other Watchfaces:<br><a style='text-decoration: none; font-weight: bold;' href='https://apps.getpebble.com/application/555283c7efff0cc8e50000b0'>Slides of Time</a><br><a style='text-decoration: none; font-weight: bold;' href='https://apps.getpebble.com/application/5546abfc47bb344acb0000d2'>BCD minimalist</a></center><br>",
   "id": "other-text"
 }
 ]
