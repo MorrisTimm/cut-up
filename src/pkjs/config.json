@@ -339,7 +339,7 @@
 },
 {
   "type": "text",
-  "defaultValue": "<center>Also check out my Watchfaces:<br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/555283c7efff0cc8e50000b0'>Slides of Time</a><br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/5546abfc47bb344acb0000d2'>BCD minimalist</a><br><a style='text-decoration: none;' href='https://apps.getpebble.com/en_US/application/58060628c988667eaa00009e'>Cut/up</a></center><br>",
+  "defaultValue": "<center>Also check out my Watchfaces:<br><a style='text-decoration: none; font-weight: bold;' href='https://apps.getpebble.com/application/555283c7efff0cc8e50000b0'>Slides of Time</a><br><a style='text-decoration: none; font-weight: bold;' href='https://apps.getpebble.com/application/5546abfc47bb344acb0000d2'>BCD minimalist</a><br><a style='text-decoration: none; font-weight: bold;' href='https://apps.getpebble.com/application/58060628c988667eaa00009e'>Cut/up</a></center><br>",
   "id": "other-text"
 }
 ]
