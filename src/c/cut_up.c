@@ -23,11 +23,6 @@ enum {
   ANIMATION_TARGET_RIGHT
 };
 
-typedef struct {
-  bool out;
-  bool visible;
-} AnimationProperties;
-
 Settings settings;
 char update_text[2][3];
 
@@ -47,7 +42,6 @@ static GPathInfo cutting_path_info = {
   .points = (GPoint[]) {{0, 0}, {0, 0}, {0, 0}, {0, 0}}
 };
 static GPoint animation_points[3];
-static AnimationProperties animation_properties[2];
 static bool is_visible[2];
 static bool should_be_visible[2];
 
