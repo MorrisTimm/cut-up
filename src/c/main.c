@@ -113,13 +113,16 @@ static void startup_handler(void* data) {
 
   handle_leading_zeroes();
   cut_up_update(memcmp(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2),
-                memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), true);
+                memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), is_in_focus);
 }
 
 static void enamel_settings_received_handler(void* context) {
   load_settings();
-  if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+  if(ANIMATIONS_ON != settings.animations) {
     app_focus_service_unsubscribe();
+    if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+      settings.animations = ANIMATIONS_OFF;
+    }
   }
   startup_handler(context);
 }
@@ -134,7 +137,8 @@ static void exit_app() {
   if(APP_LAUNCH_QUICK_LAUNCH == launch_reason()) {
     exit_reason_set(APP_EXIT_ACTION_PERFORMED_SUCCESSFULLY);
   }
-  if(ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations) {
+  if(ANIMATIONS_ON == settings.animations ||
+     ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations) {
     cut_up_update(true, true, false);
     app_timer_register((25*PBL_DISPLAY_WIDTH)/10, timer_exit, NULL);
   } else {
@@ -153,10 +157,13 @@ static void did_focus_handler(bool in_focus) {
     static bool startup = true;
     if(startup) {
       startup = false;
-      if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
-        app_focus_service_unsubscribe();
-      }
       startup_handler(NULL);
+      if(ANIMATIONS_ON != settings.animations) {
+        app_focus_service_unsubscribe();
+        if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+          settings.animations = ANIMATIONS_OFF;
+        }
+      }
     } else {
       cut_up_update(true, true, true);
     }

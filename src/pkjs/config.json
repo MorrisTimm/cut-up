@@ -224,12 +224,16 @@
           "value": 0
         },
         {
-          "label": "Startup and transitions",
+          "label": "On",
           "value": 1
         },
         {
           "label": "Startup only",
           "value": 2
+        },
+        {
+          "label": "Startup and transitions",
+          "value": 3
         }
       ]
     },
