@@ -120,7 +120,7 @@ static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
 
   handle_leading_zeroes();
   cut_up_update(memcmp(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2),
-                memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), true);
+                memcmp(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2), is_in_focus);
 
   if(0 == tick_time->tm_min && units_changed & MINUTE_UNIT && enamel_get_hourly_vibration()) {
     bluetooth_vibrate(enamel_get_hourly_vibration());
@@ -130,9 +130,11 @@ static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
 static void enamel_settings_received_handler(void *context) {
   load_settings();
 
-  if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+  if(ANIMATIONS_ON != settings.animations) {
     app_focus_service_unsubscribe();
-    settings.animations = ANIMATIONS_OFF;
+    if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+      settings.animations = ANIMATIONS_OFF;
+    }
   }
 
   time_t now = time(NULL);
@@ -155,9 +157,11 @@ static void did_focus_handler(bool in_focus) {
 #else
       tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 #endif
-      if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+      if(ANIMATIONS_ON != settings.animations) {
         app_focus_service_unsubscribe();
-        settings.animations = ANIMATIONS_OFF;
+        if(ANIMATIONS_STARTUP_AND_TRANSITIONS != settings.animations) {
+          settings.animations = ANIMATIONS_OFF;
+        }
       }
     } else {
       cut_up_update(true, true, true);

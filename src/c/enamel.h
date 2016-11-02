@@ -115,8 +115,9 @@ DATE_LEADING_ZEROESValue enamel_get_date_leading_zeroes();
 // Getter for 'animations'
 typedef enum {
 	ANIMATIONS_OFF = 0,
-	ANIMATIONS_STARTUP_AND_TRANSITIONS = 1,
+	ANIMATIONS_ON = 1,
 	ANIMATIONS_STARTUP_ONLY = 2,
+	ANIMATIONS_STARTUP_AND_TRANSITIONS = 3,
 } ANIMATIONSValue;
 ANIMATIONSValue enamel_get_animations();
 // -----------------------------------------------------
