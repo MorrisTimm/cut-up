@@ -222,7 +222,11 @@ static void app_glance_reload_callback(AppGlanceReloadSession *session, size_t l
   // add as many slices as possible
   for(size_t i = 0; i < limit && APP_GLANCE_RESULT_SUCCESS == result; ++i, start_of_day += SECONDS_PER_DAY) {
     struct tm* tick_time = localtime(&start_of_day);
-    strftime(message, 32, "%A, %x", tick_time);
+    if(enamel_get_weekday_in_appglance()) {
+      strftime(message, ARRAY_LENGTH(message), "%A, %x", tick_time);
+    } else {
+      strftime(message, ARRAY_LENGTH(message), "%x", tick_time);
+    }
     const AppGlanceSlice entry = (AppGlanceSlice) {
       .layout = {
         .subtitle_template_string = message

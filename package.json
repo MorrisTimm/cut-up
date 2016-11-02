@@ -32,7 +32,8 @@
             "quick_launch_timeout",
             "show_time_on_start",
             "show_leading_zeroes_on_time",
-            "first_day_of_the_week"
+            "first_day_of_the_week",
+            "weekday_in_appglance"
         ],
         "projectType": "native",
         "resources": {

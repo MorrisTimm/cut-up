@@ -180,6 +180,14 @@ FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week(){
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'weekday_in_appglance'
+bool enamel_get_weekday_in_appglance(){
+	Tuple* tuple = dict_find(&s_dict, 2376206420);
+	return tuple ? tuple->value->int32 == 1 : true;
+}
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'show_time_on_start'
 bool enamel_get_show_time_on_start(){
 	Tuple* tuple = dict_find(&s_dict, 2230560336);
@@ -221,6 +229,7 @@ static uint16_t prv_get_inbound_size() {
 		+ 7 + 4
 		+ 7 + 2
 		+ 7 + 4
+		+ 7 + 4
 		+ 7 + 2
 ;
 }
@@ -248,6 +257,7 @@ static uint32_t prv_map_messagekey(const uint32_t key){
 	if( key == MESSAGE_KEY_show_leading_zeroes) return 1614853234;
 	if( key == MESSAGE_KEY_quick_launch_timeout) return 3053448009;
 	if( key == MESSAGE_KEY_first_day_of_the_week) return 1349210911;
+	if( key == MESSAGE_KEY_weekday_in_appglance) return 2376206420;
 	if( key == MESSAGE_KEY_show_time_on_start) return 2230560336;
 	if( key == MESSAGE_KEY_show_leading_zeroes_on_time) return 1956971886;
 	return 0;

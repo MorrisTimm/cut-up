@@ -138,6 +138,11 @@ FIRST_DAY_OF_THE_WEEKValue enamel_get_first_day_of_the_week();
 // -----------------------------------------------------
 
 // -----------------------------------------------------
+// Getter for 'weekday_in_appglance'
+bool enamel_get_weekday_in_appglance();
+// -----------------------------------------------------
+
+// -----------------------------------------------------
 // Getter for 'show_time_on_start'
 bool enamel_get_show_time_on_start();
 // -----------------------------------------------------
