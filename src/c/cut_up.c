@@ -337,7 +337,7 @@ static void animation_stopped(Animation *animation, bool finished, void *context
 static void animate(int pos, bool visible) {
   PropertyAnimation* animation;
   animation = property_animation_create_bounds_origin(text_layer[pos], NULL, is_visible[pos] ? (CUT_UP_TOP == pos ? &animation_points[ANIMATION_TARGET_LEFT] : &animation_points[ANIMATION_TARGET_RIGHT]) : &animation_points[ANIMATION_TARGET_ZERO]);
-  animation_set_duration((Animation*)animation, (25*PBL_DISPLAY_WIDTH)/10);
+  animation_set_duration((Animation*)animation, 250);
   animation_set_curve((Animation*)animation, (is_visible[pos] || CUT_UP_TOP == pos) ? AnimationCurveEaseIn : AnimationCurveEaseOut);
   should_be_visible[pos] = visible;
   animation_set_handlers((Animation*)animation, (AnimationHandlers) {
@@ -365,8 +365,9 @@ static void my_window_load(Window *window) {
 #endif // PBL_API_EXISTS(unobstructed_area_service_subscribe)
 
   // the endpoints of the cutting line
-  cut[0] = GPoint(0, root_bounds.size.h/2+10);
-  cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-10);
+  uint16_t cutting_line_offset = root_bounds.size.h/18;
+  cut[0] = GPoint(0, root_bounds.size.h/2+cutting_line_offset);
+  cut[1] = GPoint(root_bounds.size.w, root_bounds.size.h/2-cutting_line_offset);
 
   // this is fine tuned to save RAM, it only needs to cover the overlapping area
 #ifdef PBL_PLATFORM_APLITE
@@ -385,8 +386,8 @@ static void my_window_load(Window *window) {
 
   // setup the animation start and end points
   animation_points[0] = GPointZero;
-  animation_points[1] = GPoint(-((root_bounds.size.w*15)/10), 30);
-  animation_points[2] = GPoint(((root_bounds.size.w*15)/10), -30);
+  animation_points[1] = GPoint(-((root_bounds.size.w*15)/10), 3*cutting_line_offset);
+  animation_points[2] = GPoint(((root_bounds.size.w*15)/10), -3*cutting_line_offset);
 
   // creates a mask to do the cutting
   mask_layer = layer_create(GRect(root_bounds.origin.x, root_bounds.origin.y+unobstructed_offset, root_bounds.size.w, root_bounds.size.h));
