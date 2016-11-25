@@ -6,6 +6,7 @@
 #ifndef PBL_PLATFORM_APLITE // there is no date on Aplite to save RAM
 #include "tapping.h"
 #endif
+//#include <pebble-time-machine/pebble-time-machine.h>
 
 extern Settings settings;
 static char current_text[2][3];
@@ -93,11 +94,6 @@ static void handle_leading_zeroes() {
 }
 
 static void tick_handler(struct tm* tick_time, TimeUnits units_changed) {
-#if 0 // for testing
-  light_enable(true);
-  tick_time->tm_hour = 0;
-  tick_time->tm_min = 0;
-#endif
   // store current value for comparison
   memcpy(current_text[CUT_UP_TOP], update_text[CUT_UP_TOP], 2);
   memcpy(current_text[CUT_UP_BOTTOM], update_text[CUT_UP_BOTTOM], 2);
@@ -137,8 +133,13 @@ static void enamel_settings_received_handler(void *context) {
     }
   }
 
+  struct tm* tick_time;
+#ifdef TIME_MACHINE
+  tick_time = time_machine_get_time();
+#else
   time_t now = time(NULL);
-  struct tm* tick_time = localtime(&now);
+  tick_time = localtime(&now);
+#endif
   tick_handler(tick_time, 0);
 }
 
@@ -152,8 +153,16 @@ static void did_focus_handler(bool in_focus) {
       time_t now = time(NULL);
       struct tm* tick_time = localtime(&now);
       tick_handler(tick_time, 0);
-#if 0 // for testing animations
-      tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+#ifdef TIME_MACHINE
+      light_enable(true);
+      struct tm end_time = *tick_time;
+      tick_time->tm_hour = 15;
+      tick_time->tm_min = 58;
+      end_time.tm_hour = 16;
+      end_time.tm_min = 01;
+      time_machine_init_loop(tick_time, &end_time, TIME_MACHINE_MINUTES, 2000);
+      //time_machine_init(tick_time, TIME_MACHINE_MINUTES, 1000);
+      time_machine_tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 #else
       tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 #endif
@@ -188,8 +197,13 @@ void start() {
 
 #ifndef PBL_PLATFORM_APLITE // there is no date on Aplite to save RAM
 void tapping_listener(bool active) {
+  struct tm* tick_time;
+#ifdef TIME_MACHINE
+  tick_time = time_machine_get_time();
+#else
   time_t now = time(NULL);
-  struct tm* tick_time = localtime(&now);
+  tick_time = localtime(&now);
+#endif
   tick_handler(tick_time, 0);
 }
 #endif

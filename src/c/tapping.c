@@ -1,7 +1,6 @@
 #include <pebble.h>
 #ifndef PBL_PLATFORM_APLITE // there is no date on Aplite to save RAM
 #include "tapping.h"
-#include "enamel.h"
 
 extern void tapping_listener(bool active);
 
@@ -24,7 +23,7 @@ static void counter_timer_handler(void* data) {
 }
 
 static void tap_handler(AccelAxisType axis, int32_t direction) {
-  if(++counter >= enamel_get_tapping_threshold()) {
+  if(++counter >= tapping_settings.threshold) {
     active = true;
     counter = 0;
     tapping_listener(active);
