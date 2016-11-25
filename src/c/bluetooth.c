@@ -22,7 +22,7 @@ static bool bt_connected = false;
 
 void bluetooth_vibrate(uint8_t vibration_pattern) {
   // check no vibration
-  if(VIBRATE_ON_BT_DISCONNECT_NONE == vibration_pattern) {
+  if(VIBRATE_ON_BT_DISCONNECT_NONE == vibration_pattern || quiet_time_is_active()) {
     return;
   }
 
