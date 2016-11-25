@@ -1,76 +1,76 @@
 {
-    "author": "Morris",
-    "dependencies": {
-        "enamel": "^1.2.4",
-        "pebble-fctx": "^1.6.1"
-    },
-    "keywords": [],
-    "name": "cut-up-plus",
-    "pebble": {
-        "capabilities": [
-            "configurable"
-        ],
-        "displayName": "Cut/up+",
-        "enableMultiJS": true,
-        "messageKeys": [
-            "color_background_top",
-            "color_background_bottom",
-            "color_text_top",
-            "color_text_bottom",
-            "color_text_outline_top",
-            "color_text_outline_bottom",
-            "color_the_cut",
-            "color_the_cut_outline_top",
-            "color_the_cut_outline_bottom",
-            "animations",
-            "color_the_cut_disconnected",
-            "offset_y_text_top",
-            "offset_y_text_bottom",
-            "show_leading_zeroes",
-            "value_top",
-            "value_bottom",
-            "quick_launch_timeout",
-            "show_time_on_start",
-            "show_leading_zeroes_on_time",
-            "first_day_of_the_week",
-            "weekday_in_appglance"
-        ],
-        "projectType": "native",
-        "resources": {
-            "media": [
-                {
-                    "file": "images/cutup_menu_icon.png",
-                    "menuIcon": true,
-                    "name": "CUTUP_MENU_ICON",
-                    "targetPlatforms": null,
-                    "type": "bitmap"
-                },
-                {
-                    "file": "data/PeaceSans_outline.ffont",
-                    "name": "FONT_PEACE_SANS_OUTLINE",
-                    "targetPlatforms": null,
-                    "type": "raw"
-                },
-                {
-                    "file": "data/PeaceSans.ffont",
-                    "name": "FONT_PEACE_SANS",
-                    "targetPlatforms": null,
-                    "type": "raw"
-                }
-            ]
+  "author": "Morris",
+  "dependencies": {
+    "enamel": "^1.2.4",
+    "pebble-fctx": "^1.6.1"
+  },
+  "keywords": [],
+  "name": "cut-up-plus",
+  "pebble": {
+    "capabilities": [
+      "configurable"
+    ],
+    "displayName": "Cut/up+",
+    "enableMultiJS": true,
+    "messageKeys": [
+      "color_background_top",
+      "color_background_bottom",
+      "color_text_top",
+      "color_text_bottom",
+      "color_text_outline_top",
+      "color_text_outline_bottom",
+      "color_the_cut",
+      "color_the_cut_outline_top",
+      "color_the_cut_outline_bottom",
+      "animations",
+      "color_the_cut_disconnected",
+      "offset_y_text_top",
+      "offset_y_text_bottom",
+      "show_leading_zeroes",
+      "value_top",
+      "value_bottom",
+      "quick_launch_timeout",
+      "show_time_on_start",
+      "show_leading_zeroes_on_time",
+      "first_day_of_the_week",
+      "weekday_in_appglance"
+    ],
+    "projectType": "native",
+    "resources": {
+      "media": [
+        {
+          "file": "images/cutup_menu_icon.png",
+          "menuIcon": true,
+          "name": "CUTUP_MENU_ICON",
+          "targetPlatforms": null,
+          "type": "bitmap"
         },
-        "sdkVersion": "3",
-        "targetPlatforms": [
-            "aplite",
-            "basalt",
-            "chalk",
-            "diorite",
-            "emery"
-        ],
-        "uuid": "5942481d-9d39-40a7-9c7a-8f6de05a78bf",
-        "watchapp": {
-            "watchface": false
+        {
+          "file": "data/PeaceSans_outline.ffont",
+          "name": "FONT_PEACE_SANS_OUTLINE",
+          "targetPlatforms": null,
+          "type": "raw"
+        },
+        {
+          "file": "data/PeaceSans.ffont",
+          "name": "FONT_PEACE_SANS",
+          "targetPlatforms": null,
+          "type": "raw"
         }
+      ]
     },
-    "version": "1.2.0"
+    "sdkVersion": "3",
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery"
+    ],
+    "uuid": "5942481d-9d39-40a7-9c7a-8f6de05a78bf",
+    "watchapp": {
+      "watchface": false
+    }
+  },
+  "version": "1.3.0"
 }

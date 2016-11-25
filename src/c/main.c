@@ -75,11 +75,10 @@ static void set_value(char* text, uint8_t value, struct tm* tick_time) {
     }
     case VALUE_TOP_BATTERY_LEVEL: {
       BatteryChargeState battery_state =  battery_state_service_peek();
-      uint8_t battery_level = battery_state.charge_percent;
-      if(battery_level > 99) {
-        battery_level = 99;
+      if(battery_state.charge_percent > 99) {
+        battery_state.charge_percent = 99;
       }
-      snprintf(text, 3, "%02d", battery_level);
+      snprintf(text, 3, "%02d", battery_state.charge_percent);
       break;
     }
     case VALUE_TOP_CALENDAR_WEEK__ISO_8601_: {
@@ -140,7 +139,7 @@ static void exit_app() {
   if(ANIMATIONS_ON == settings.animations ||
      ANIMATIONS_STARTUP_AND_TRANSITIONS == settings.animations) {
     cut_up_update(true, true, false);
-    app_timer_register((25*PBL_DISPLAY_WIDTH)/10, timer_exit, NULL);
+    app_timer_register(250, timer_exit, NULL);
   } else {
     window_stack_pop_all(false);
   }
